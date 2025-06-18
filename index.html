@@ -486,7 +486,30 @@
     </section>
 </main>
 <script>
-// Função genérica para atualizar barras de todas as semanas
+// Salva o estado dos checkboxes no localStorage
+function salvarCheckboxes() {
+    let estados = {};
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        estados[cb.className + '-' + cb.parentElement.textContent.trim()] = cb.checked;
+    });
+    localStorage.setItem('progressoPlanoEstudo', JSON.stringify(estados));
+}
+
+// Carrega o estado dos checkboxes do localStorage
+function carregarCheckboxes() {
+    let estados = {};
+    try {
+        estados = JSON.parse(localStorage.getItem('progressoPlanoEstudo')) || {};
+    } catch {}
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        let chave = cb.className + '-' + cb.parentElement.textContent.trim();
+        if (estados.hasOwnProperty(chave)) {
+            cb.checked = estados[chave];
+        }
+    });
+}
+
+// Atualiza barras e salva ao marcar/desmarcar
 function atualizarProgressoSemanas() {
     for (let i = 1; i <= 10; i++) {
         const cbs = document.querySelectorAll('.cb-semana-' + i);
@@ -499,17 +522,23 @@ function atualizarProgressoSemanas() {
             barra.textContent = pct + '%';
         }
     }
-}
-// Adiciona listeners para todos os checkboxes de todas as semanas
-for (let i = 1; i <= 10; i++) {
-    const cbs = document.querySelectorAll('.cb-semana-' + i);
-    cbs.forEach(cb => {
-        cb.addEventListener('change', atualizarProgressoSemanas);
-    });
+    salvarCheckboxes();
 }
 
-// Inicializa o progresso das semanas ao carregar a página
-document.addEventListener('DOMContentLoaded', atualizarProgressoSemanas);
+// Adiciona listeners para todos os checkboxes de todas as semanas
+function adicionarListeners() {
+    for (let i = 1; i <= 10; i++) {
+        document.querySelectorAll('.cb-semana-' + i).forEach(cb => {
+            cb.addEventListener('change', atualizarProgressoSemanas);
+        });
+    }
+}
+
+window.addEventListener('DOMContentLoaded', function() {
+    carregarCheckboxes();
+    atualizarProgressoSemanas();
+    adicionarListeners();
+});
 </script>
 </body>
 </html>

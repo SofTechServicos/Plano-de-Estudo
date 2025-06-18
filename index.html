@@ -3,755 +3,513 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Painel de Progresso - Bloco 1</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Chart.js para gráficos -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Plano de Estudo - Bloco 1</title>
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f6fa; margin: 0; padding: 0; }
-        header { background: #2d3e50; color: #fff; padding: 20px 0 10px 0; text-align: center; }
-        .ava-btn { background: #7ed957; color: #2d3e50; border: none; border-radius: 6px; padding: 10px 22px; font-size: 1em; font-weight: bold; margin-bottom: 15px; cursor: pointer; transition: background 0.2s; }
-        .ava-btn:hover { background: #5bbd3e; color: #fff; }
-        main { max-width: 950px; margin: 30px auto; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px #0001; padding: 30px; }
-        h1, h2 { color: #2d3e50; }
-        .disciplinas { display: flex; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
-        .disciplina { background: #eaf1fb; border-radius: 8px; padding: 10px 18px; font-weight: bold; color: #2d3e50; }
-        .tabs { display: flex; gap: 10px; margin-bottom: 25px; }
-        .tab-btn { background: #eaf1fb; border: none; border-radius: 6px 6px 0 0; padding: 10px 25px; font-size: 1em; cursor: pointer; color: #2d3e50; }
-        .tab-btn.active { background: #2d3e50; color: #fff; font-weight: bold; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .filtros { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
-        .filtros select, .filtros button { padding: 7px 12px; border-radius: 5px; border: 1px solid #dbe6f3; font-size: 1em; }
-        .filtros button { background: #2d3e50; color: #fff; border: none; cursor: pointer; }
-        .filtros button:hover { background: #7ed957; color: #2d3e50; }
-        .semana { margin-bottom: 30px; border-left: 4px solid #2d3e50; padding-left: 15px; }
-        .dias, .dias-disc { display: flex; flex-wrap: wrap; gap: 10px; }
-        .dia, .dia-disc { background: #f9fafc; border: 1.5px solid #dbe6f3; border-radius: 6px; padding: 10px; min-width: 180px; flex: 1 1 180px; position: relative; cursor: pointer; transition: box-shadow 0.2s, border 0.2s; }
-        .dia.done, .dia-disc.done { background: #d4f7d4; border-color: #7ed957; }
-        .dia.inprogress, .dia-disc.inprogress { border-color: #f7d957; background: #fffbe6; }
-        .dia.review, .dia-disc.review { border-color: #f77d57; background: #fff0e6; }
-        .dia input[type="checkbox"], .dia-disc input[type="checkbox"] { position: absolute; top: 10px; right: 10px; pointer-events: none; }
-        .meta { font-size: 0.98em; color: #333; margin-top: 5px; }
-        .progresso-bar { height: 18px; background: #eaf1fb; border-radius: 9px; margin: 20px 0; overflow: hidden; }
-        .progresso-bar-inner { height: 100%; background: #2d3e50; width: 0; color: #fff; text-align: center; line-height: 18px; transition: width 0.4s; }
-        .disciplina-bloco { margin-bottom: 30px; border-left: 4px solid #7ed957; padding-left: 15px; }
-        .dia:hover, .dia-disc:hover { box-shadow: 0 2px 8px #0002; }
-        .anexo-indicador { color: #7ed957; font-size: 1.2em; margin-left: 4px; vertical-align: middle; }
-        /* Modal */
-        .modal-bg {
-            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.35); z-index: 1000; align-items: center; justify-content: center;
+        body { font-family: Arial, sans-serif; background: #f7f9fa; margin: 0; padding: 0; }
+        main { max-width: 900px; margin: 30px auto; background: #fff; padding: 24px 32px 32px 32px; border-radius: 12px; box-shadow: 0 2px 12px #0001; }
+        h1 { text-align: center; }
+        .semana { margin-bottom: 38px; border-bottom: 1px solid #e0e0e0; padding-bottom: 24px; }
+        .semana:last-child { border-bottom: none; }
+        h2 { margin-bottom: 8px; font-size: 1.25em; color: #2d3e50; }
+        .progresso-bar-semana {
+            width: 100%;
+            background: #eaf1fb;
+            border-radius: 8px;
+            margin: 10px 0 18px 0;
+            height: 18px;
+            overflow: hidden;
         }
-        .modal-bg.active { display: flex; }
-        .modal {
-            background: #fff; border-radius: 10px; max-width: 400px; width: 95%; padding: 30px 25px 20px 25px;
-            box-shadow: 0 4px 24px #0004; position: relative; animation: modalIn 0.2s;
+        .progresso-bar-inner-semana {
+            background: #7ed957;
+            color: #2d3e50;
+            height: 100%;
+            width: 0%;
+            border-radius: 8px;
+            text-align: right;
+            padding-right: 8px;
+            font-weight: bold;
+            transition: width 0.3s;
+            line-height: 18px;
         }
-        @keyframes modalIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .modal-close {
-            position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 1.5em; color: #2d3e50; cursor: pointer;
-        }
-        .modal h3 { margin-top: 0; }
-        .modal .disciplinas-list { margin: 10px 0 15px 0; }
-        .modal .disciplinas-list span {
-            background: #eaf1fb; color: #2d3e50; border-radius: 5px; padding: 3px 10px; margin-right: 5px; font-size: 0.95em;
-        }
-        .modal label { display: flex; align-items: center; gap: 8px; margin-top: 15px; }
-        .modal select, .modal textarea { width: 100%; margin-top: 10px; border-radius: 5px; border: 1px solid #dbe6f3; padding: 7px; font-size: 1em; }
-        .modal textarea { min-height: 60px; }
-        .modal .anexo-area { margin-top: 10px; }
-        .modal .anexo-area label { font-size: 0.98em; }
-        .modal .anexo-area input[type="file"] { margin-top: 5px; }
-        .modal .anexo-link { display: block; margin-top: 5px; color: #2d3e50; text-decoration: underline; font-size: 0.97em; }
-        .modal .anexo-ok { color: #7ed957; font-weight: bold; }
-        .modal .alerta { background: #f7d957; color: #2d3e50; border-radius: 5px; padding: 7px 10px; margin-top: 10px; font-size: 0.98em; }
-        .modal .alerta.urgente { background: #f77d57; color: #fff; }
-        .modal .status-label { font-weight: bold; margin-right: 8px; }
-        .modal .status-pendente { color: #aaa; }
-        .modal .status-inprogress { color: #f7d957; }
-        .modal .status-review { color: #f77d57; }
-        .modal .status-done { color: #7ed957; }
-        /* Gráficos */
-        .graficos { display: flex; flex-wrap: wrap; gap: 30px; margin-bottom: 30px; }
-        .grafico-box { background: #f9fafc; border-radius: 10px; padding: 15px 10px; flex: 1 1 250px; min-width: 220px; text-align: center; }
+        .dias { display: flex; flex-wrap: wrap; gap: 16px; }
+        .dia { background: #f4f8fb; border-radius: 8px; padding: 12px 16px; flex: 1 1 260px; min-width: 220px; margin-bottom: 8px; }
+        .dia strong { color: #3b5998; }
+        ul { margin: 8px 0 0 0; padding-left: 18px; }
+        li { margin-bottom: 4px; }
         @media (max-width: 700px) {
-            main { padding: 10px; }
-            .dias, .dias-disc { flex-direction: column; }
-            .graficos { flex-direction: column; gap: 10px; }
-            .modal { padding: 18px 8px 10px 8px; }
+            main { padding: 8px; }
+            .dias { flex-direction: column; }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Plano de Estudos - Bloco 1</h1>
-        <a href="https://univirtus.uninter.com/ava/web/" target="_blank">
-            <button class="ava-btn">Acessar AVA UNINTER</button>
-        </a>
-        <div class="disciplinas">
-            <div class="disciplina">SIG</div>
-            <div class="disciplina">SSI</div>
-            <div class="disciplina">QS</div>
-            <div class="disciplina">DC</div>
-            <div class="disciplina">AE I</div>
-        </div>
-    </header>
-    <main>
-        <div class="tabs">
-            <button class="tab-btn active" data-tab="geral">Visão Geral</button>
-            <button class="tab-btn" data-tab="disciplinas">Por Disciplina</button>
-        </div>
-        <div id="tab-geral" class="tab-content active">
-            <div class="graficos">
-                <div class="grafico-box">
-                    <canvas id="graficoPizza" width="200" height="200"></canvas>
-                    <div style="margin-top:8px;font-size:0.98em;">Progresso Geral</div>
+<main>
+    <h1>Plano de Estudo - Bloco 1</h1>
+    <section id="cronograma">
+        <!-- Semana 1 -->
+        <div class="semana">
+            <h2>Semana 1/10: Reconhecimento e Montagem da Base (17/06 a 23/06)</h2>
+            <div class="progresso-bar-semana">
+                <div class="progresso-bar-inner-semana" id="prog-semana-1">0%</div>
+            </div>
+            <div class="dias">
+                <div class="dia"><strong>Terça (17/06)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-1"> Leitura do PE de SIG</li>
+                        <li><input type="checkbox" class="cb-semana-1"> Leitura do PE de SSI</li>
+                    </ul>
                 </div>
-                <div class="grafico-box">
-                    <canvas id="graficoBarra" width="200" height="200"></canvas>
-                    <div style="margin-top:8px;font-size:0.98em;">Progresso por Disciplina</div>
+                <div class="dia"><strong>Quarta (18/06)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-1"> Leitura do PE de QS</li>
+                        <li><input type="checkbox" class="cb-semana-1"> Leitura do PE de DC</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Quinta (19/06)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-1"> Leitura e imersão no PE e Aulas (1 a 7) de AE I</li>
+                        <li><input type="checkbox" class="cb-semana-1"> Definição do tema para AE I</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Sexta (20/06)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-1"> Definição dos temas preliminares para as 3 APs</li>
+                        <li><input type="checkbox" class="cb-semana-1"> Revisão geral dos requisitos de todos os 5 PEs</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Sábado (21/06)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-1"> Montagem da base digital</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Domingo (22/06)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-1"> Descanso</li>
+                    </ul>
                 </div>
             </div>
-            <div class="filtros">
-                <select id="filtroStatus">
-                    <option value="">Status: Todos</option>
-                    <option value="pendente">Pendente</option>
-                    <option value="inprogress">Em andamento</option>
-                    <option value="review">Precisa revisão</option>
-                    <option value="done">Concluído</option>
-                </select>
-                <select id="filtroDisciplina">
-                    <option value="">Disciplina: Todas</option>
-                    <option value="SIG">SIG</option>
-                    <option value="SSI">SSI</option>
-                    <option value="QS">QS</option>
-                    <option value="DC">DC</option>
-                    <option value="AE I">AE I</option>
-                </select>
-                <select id="filtroSemana">
-                    <option value="">Semana: Todas</option>
-                </select>
-                <button id="btnExportar">Exportar CSV</button>
+        </div>
+        <!-- Semana 2 -->
+        <div class="semana">
+            <h2>Semana 2/10: Estruturação dos Projetos (24/06 a 30/06)</h2>
+            <div class="progresso-bar-semana">
+                <div class="progresso-bar-inner-semana" id="prog-semana-2">0%</div>
             </div>
-            <h2>Progresso Geral</h2>
-            <div class="progresso-bar">
-                <div class="progresso-bar-inner" id="progressoBarra">0%</div>
+            <div class="dias">
+                <div class="dia"><strong>Terça (24/06)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-2"> Criar AE1_RelatorioFinal_SeuNome.docx</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Quarta (25/06)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-2"> Criar AP_SSI_SeuNome.docx</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Quinta (26/06)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-2"> Criar AP_QS_SeuNome.docx</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Sexta (27/06)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-2"> Criar AP_DC_SeuNome.docx</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Sábado (28/06)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-2"> Explorar a Biblioteca Virtual</li>
+                        <li><input type="checkbox" class="cb-semana-2"> Criar template padrão para resumos de aulas</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Domingo (29/06)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-2"> Descanso/Folga</li>
+                    </ul>
+                </div>
             </div>
-            <div id="cronograma"></div>
         </div>
-        <div id="tab-disciplinas" class="tab-content">
-            <h2>Progresso por Disciplina</h2>
-            <div id="disciplinasView"></div>
+        <!-- Semana 3 -->
+        <div class="semana">
+            <h2>Semana 3/10: Produção Preliminar (01/07 a 07/07)</h2>
+            <div class="progresso-bar-semana">
+                <div class="progresso-bar-inner-semana" id="prog-semana-3">0%</div>
+            </div>
+            <div class="dias">
+                <div class="dia"><strong>Terça (01/07)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-3"> Escrever introdução e iniciar Justificativa/Objetivos da AE I</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Quarta (02/07)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-3"> Escrever introdução e iniciar Fundamentação Teórica da AP de SSI</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Quinta (03/07)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-3"> Escrever introdução e iniciar Conceitos de Qualidade da AP de QS</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Sexta (04/07)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-3"> Escrever introdução e iniciar Conceitos Jurídicos Relevantes da AP de DC</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Sábado (05/07)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-3"> Aprofundar pesquisa bibliográfica para os trabalhos</li>
+                        <li><input type="checkbox" class="cb-semana-3"> Revisar alinhamento com os PEs</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Domingo (06/07)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-3"> Descanso Ativo / Reunião para validar ideias</li>
+                    </ul>
+                </div>
+            </div>
         </div>
-    </main>
-    <!-- Modal -->
-    <div class="modal-bg" id="modalBg">
-        <div class="modal" id="modal">
-            <button class="modal-close" id="modalClose" title="Fechar">&times;</button>
-            <h3 id="modalDia"></h3>
-            <div class="disciplinas-list" id="modalDisciplinas"></div>
-            <div class="meta" id="modalMeta"></div>
-            <div class="anexo-area" id="modalAnexoArea"></div>
-            <label>
-                <span class="status-label">Status:</span>
-                <select id="modalStatus">
-                    <option value="pendente">Pendente</option>
-                    <option value="inprogress">Em andamento</option>
-                    <option value="review">Precisa revisão</option>
-                    <option value="done">Concluído</option>
-                </select>
-            </label>
-            <label>
-                <input type="checkbox" id="modalCheckbox">
-                Marcar como concluído
-            </label>
-            <label>
-                <span>Anotações:</span>
-                <textarea id="modalNotas" placeholder="Digite suas anotações aqui..."></textarea>
-            </label>
-            <div class="alerta" id="modalAlerta" style="display:none"></div>
+        <!-- Semana 4 -->
+        <div class="semana">
+            <h2>Semana 4/10: Organização Final e Refinamento (08/07 a 14/07)</h2>
+            <div class="progresso-bar-semana">
+                <div class="progresso-bar-inner-semana" id="prog-semana-4">0%</div>
+            </div>
+            <div class="dias">
+                <div class="dia"><strong>Terça (08/07)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-4"> Revisar e refinar Introduções e Fundamentações de todos os 4 trabalhos</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Quarta (09/07)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-4"> Criar estrutura de pastas por aula/rota dentro de cada disciplina</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Quinta (10/07)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-4"> Leitura Inicial (Aula 1) de SIG</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Sexta (11/07)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-4"> Leitura Inicial (Aula 1) de SSI</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Sábado (12/07)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-4"> Leitura Inicial (Aula 1) de QS e DC</li>
+                        <li><input type="checkbox" class="cb-semana-4"> Teste de ferramentas de produtividade</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Domingo (13/07)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-4"> Descanso Total e Alinhamento Final</li>
+                    </ul>
+                </div>
+            </div>
         </div>
-    </div>
-    <script>
-        // Dados do cronograma (exemplo com 2 semanas, adicione mais conforme necessário)
-        const cronograma = [
-            {
-                semana: "Semana 1/10: Reconhecimento e Montagem da Base (17/06 a 23/06)",
-                dias: [
-                    { dia: "Terça (17/06)", meta: "Ler PE de SIG e SSI", disciplinas: ["SIG", "SSI"] },
-                    { dia: "Quarta (18/06)", meta: "Ler PE de QS e DC", disciplinas: ["QS", "DC"] },
-                    { dia: "Quinta (19/06)", meta: "Ler PE e Aulas (1 a 7) de AE I", disciplinas: ["AE I"] },
-                    { dia: "Sexta (20/06)", meta: "Definir temas preliminares para APs", disciplinas: ["SSI", "QS", "DC"] },
-                    { dia: "Sábado (21/06)", meta: "Montagem da base digital", disciplinas: [] },
-                    { dia: "Domingo (22/06)", meta: "Descanso", disciplinas: [] }
-                ]
-            },
-            {
-                semana: "Semana 2/10: Estruturação dos Projetos (24/06 a 30/06)",
-                dias: [
-                    { dia: "Terça (24/06)", meta: "Criar AE1_RelatorioFinal_SeuNome.docx", disciplinas: ["AE I"] },
-                    { dia: "Quarta (25/06)", meta: "Criar AP_SSI_SeuNome.docx", disciplinas: ["SSI"] },
-                    { dia: "Quinta (26/06)", meta: "Criar AP_QS_SeuNome.docx", disciplinas: ["QS"] },
-                    { dia: "Sexta (27/06)", meta: "Criar AP_DC_SeuNome.docx", disciplinas: ["DC"] },
-                    { dia: "Sábado (28/06)", meta: "Explorar Biblioteca Virtual", disciplinas: [] },
-                    { dia: "Domingo (29/06)", meta: "Descanso/Folga", disciplinas: [] }
-                ]
-            },
-            {
-                semana: "Semana 3/10: Produção Preliminar (01/07 a 07/07)",
-                dias: [
-                    { dia: "Terça (01/07)", meta: "Escrever introdução e iniciar Justificativa/Objetivos da AE I", disciplinas: ["AE I"] },
-                    { dia: "Quarta (02/07)", meta: "Escrever introdução e iniciar Fundamentação Teórica da AP de SSI", disciplinas: ["SSI"] },
-                    { dia: "Quinta (03/07)", meta: "Escrever introdução e iniciar Conceitos de Qualidade da AP de QS", disciplinas: ["QS"] },
-                    { dia: "Sexta (04/07)", meta: "Escrever introdução e iniciar Conceitos Jurídicos Relevantes da AP de DC", disciplinas: ["DC"] },
-                    { dia: "Sábado (05/07)", meta: "Aprofundar pesquisa bibliográfica", disciplinas: [] },
-                    { dia: "Domingo (06/07)", meta: "Descanso Ativo / Reunião para validar ideias", disciplinas: [] }
-                ]
-            },
-            {
-                semana: "Semana 4/10: Organização Final e Refinamento (08/07 a 14/07)",
-                dias: [
-                    { dia: "Terça (08/07)", meta: "Revisar e refinar Introduções e Fundamentações", disciplinas: ["AE I", "SSI", "QS", "DC"] },
-                    { dia: "Quarta (09/07)", meta: "Criar estrutura de pastas por aula", disciplinas: [] },
-                    { dia: "Quinta (10/07)", meta: "Leitura Inicial (Aula 1) de SIG", disciplinas: ["SIG"] },
-                    { dia: "Sexta (11/07)", meta: "Leitura Inicial (Aula 1) de SSI", disciplinas: ["SSI"] },
-                    { dia: "Sábado (12/07)", meta: "Leitura Inicial (Aula 1) de QS e DC", disciplinas: ["QS", "DC"] },
-                    { dia: "Domingo (13/07)", meta: "Descanso Total e Alinhamento Final", disciplinas: [] }
-                ]
-            },
-            {
-                semana: "Semana 5/10: Refinamento dos Trabalhos (15/07 a 21/07)",
-                dias: [
-                    { dia: "Segunda (15/07)", meta: "Avançar nos trabalhos AE I e AP de SSI", disciplinas: ["AE I", "SSI"] },
-                    { dia: "Terça (16/07)", meta: "Avançar nos trabalhos AP de QS e AP de DC", disciplinas: ["QS", "DC"] },
-                    { dia: "Quarta (17/07)", meta: "Exploração avançada do AVA", disciplinas: [] },
-                    { dia: "Quinta (18/07)", meta: "Revisão geral do Plano de Estudos", disciplinas: [] },
-                    { dia: "Sexta (19/07)", meta: "Mini-Teste Rápido e rascunho de dúvidas", disciplinas: [] },
-                    { dia: "Sábado (20/07)", meta: "Último check-list pré-batalha", disciplinas: [] },
-                    { dia: "Domingo (21/07)", meta: "🎉 INÍCIO OFICIAL DAS AULAS! 🎉", disciplinas: [] }
-                ]
-            },
-            {
-                semana: "Semana 6/10: Conectando Teoria e Prática (21/07 a 27/07)",
-                dias: [
-                    { dia: "Segunda (21/07)", meta: "Estudar Aula 1 de SSI e QS", disciplinas: ["SSI", "QS"] },
-                    { dia: "Terça (22/07)", meta: "Estudar Aula 1 de SIG e DC", disciplinas: ["SIG", "DC"] },
-                    { dia: "Quarta (23/07)", meta: "Reescrever/melhorar introduções e esqueletos", disciplinas: ["AE I", "SSI", "QS", "DC"] },
-                    { dia: "Quinta (24/07)", meta: "Fazer resumo conectando os temas das 4 aulas", disciplinas: ["SIG", "SSI", "QS", "DC"] },
-                    { dia: "Sexta (25/07)", meta: "Realizar as APOLs da Aula 1", disciplinas: ["SIG", "SSI", "QS", "DC"] },
-                    { dia: "Sábado (26/07)", meta: "Colocar em dia qualquer pendência", disciplinas: [] },
-                    { dia: "Domingo (27/07)", meta: "Descansar", disciplinas: [] }
-                ]
-            },
-            {
-                semana: "Semana 7/10: Ritmo da Maratona e Desenvolvimento Profundo (28/07 a 03/08)",
-                dias: [
-                    { dia: "Segunda (28/07)", meta: "Estudar Aula 2 de SSI e QS", disciplinas: ["SSI", "QS"] },
-                    { dia: "Terça (29/07)", meta: "Estudar Aula 2 de SIG e DC", disciplinas: ["SIG", "DC"] },
-                    { dia: "Quarta (30/07)", meta: "Avançar nos 4 trabalhos, adicionando conteúdo", disciplinas: ["AE I", "SSI", "QS", "DC"] },
-                    { dia: "Quinta (31/07)", meta: "Releia resumos da Aula 1 e 2, conecte conceitos", disciplinas: ["SIG", "SSI", "QS", "DC"] },
-                    { dia: "Sexta (01/08)", meta: "APOLs (Aulas 1 e 2) e Treino de Prova Discursiva", disciplinas: ["SIG", "SSI", "QS", "DC"] },
-                    { dia: "Sábado (02/08)", meta: "Resgate e FOCO ADICIONAL na produção dos 4 trabalhos", disciplinas: ["AE I", "SSI", "QS", "DC"] },
-                    { dia: "Domingo (03/08)", meta: "Descanso", disciplinas: [] }
-                ]
-            },
-            {
-                semana: "Semana 8/10: Reforço dos Fundamentos (04/08 a 10/08)",
-                dias: [
-                    { dia: "Segunda (04/08)", meta: "Estudar Aula 3 de SSI e QS", disciplinas: ["SSI", "QS"] },
-                    { dia: "Terça (05/08)", meta: "Estudar Aula 3 de SIG e DC", disciplinas: ["SIG", "DC"] },
-                    { dia: "Quarta (06/08)", meta: "ATINGIR 50% DO CORPO DOS 4 TRABALHOS ESCRITOS", disciplinas: ["AE I", "SSI", "QS", "DC"] },
-                    { dia: "Quinta (07/08)", meta: "Revisão Profunda e Interconexão das Aulas 1-3", disciplinas: ["SIG", "SSI", "QS", "DC"] },
-                    { dia: "Sexta (08/08)", meta: "APOLs (Aula 3) e Treino de Prova Discursiva", disciplinas: ["SIG", "SSI", "QS", "DC"] },
-                    { dia: "Sábado (09/08)", meta: "Resgate e FOCO CRÍTICO para atingir os 50% dos trabalhos", disciplinas: ["AE I", "SSI", "QS", "DC"] },
-                    { dia: "Domingo (10/08)", meta: "Descanso profundo", disciplinas: [] }
-                ]
-            },
-            {
-                semana: "Semana 9/10: Mergulho Final no Conteúdo (11/08 a 17/08)",
-                dias: [
-                    { dia: "Segunda (11/08)", meta: "Estudar Aulas 4 e 5 de SSI e QS", disciplinas: ["SSI", "QS"] },
-                    { dia: "Terça (12/08)", meta: "Estudar Aulas 4 e 5 de SIG e DC", disciplinas: ["SIG", "DC"] },
-                    { dia: "Quarta (13/08)", meta: "FINALIZAR 95% DO CONTEÚDO BRUTO DOS 4 TRABALHOS", disciplinas: ["AE I", "SSI", "QS", "DC"] },
-                    { dia: "Quinta (14/08)", meta: "Revisão Geral e Preparo Intensivo para Prova", disciplinas: ["SIG", "SSI", "QS", "DC"] },
-                    { dia: "Sexta (15/08)", meta: "APOLs (Aulas 4 e 5) e Simulado de Prova Discursiva", disciplinas: ["SIG", "SSI", "QS", "DC"] },
-                    { dia: "Sábado (16/08)", meta: "Revisão FINAL de CONTEÚDO e PRIMEIROS AJUSTES DE FORMATAÇÃO", disciplinas: ["AE I", "SSI", "QS", "DC"] },
-                    { dia: "Domingo (17/08)", meta: "Descanso e preparo mental para a última semana", disciplinas: [] }
-                ]
-            },
-            {
-                semana: "Semana 10/10: Fechamento Total e Entrega Antecipada (18/08 a 24/08)",
-                dias: [
-                    { dia: "Segunda (18/08)", meta: "Estudar Aula 6 de SSI e QS", disciplinas: ["SSI", "QS"] },
-                    { dia: "Terça (19/08)", meta: "Estudar Aula 6 de SIG e DC", disciplinas: ["SIG", "DC"] },
-                    { dia: "Quarta (20/08)", meta: "Revisão Concentrada para Prova", disciplinas: ["SIG", "SSI", "QS", "DC"] },
-                    { dia: "Quinta (21/08)", meta: "ÚLTIMA REVISÃO DE FORMATO e SUBMISSÃO dos 4 trabalhos", disciplinas: ["AE I", "SSI", "QS", "DC"] },
-                    { dia: "Sexta (22/08)", meta: "Garantia APOLs e Prática final de Prova Discursiva", disciplinas: ["SIG", "SSI", "QS", "DC"] },
-                    { dia: "Sábado (23/08)", meta: "Revisão completa dos resumos pessoais e das suas próprias APs", disciplinas: ["SIG", "SSI", "QS", "DC"] },
-                    { dia: "Domingo (24/08)", meta: "Descanso e preparo mental final para as provas", disciplinas: [] }
-                ]
-            }
-        ];
-
-        const disciplinas = ["SIG", "SSI", "QS", "DC", "AE I"];
-        const statusList = {
-            pendente: "Pendente",
-            inprogress: "Em andamento",
-            review: "Precisa revisão",
-            done: "Concluído"
-        };
-
-        // Progresso no localStorage
-        function getProgresso() {
-            return JSON.parse(localStorage.getItem("progressoEstudosBloco1") || "{}");
+        <!-- Semana 5 -->
+        <div class="semana">
+            <h2>Semana 5/10: Refinamento dos Trabalhos (15/07 a 21/07)</h2>
+            <div class="progresso-bar-semana">
+                <div class="progresso-bar-inner-semana" id="prog-semana-5">0%</div>
+            </div>
+            <div class="dias">
+                <div class="dia"><strong>Segunda (15/07)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-5"> Avançar nos trabalhos AE I e AP de SSI</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Terça (16/07)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-5"> Avançar nos trabalhos AP de QS e AP de DC</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Quarta (17/07)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-5"> Exploração avançada do AVA</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Quinta (18/07)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-5"> Revisão geral do Plano de Estudos</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Sexta (19/07)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-5"> Mini-Teste Rápido (conceitos chave) e rascunho de dúvidas</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Sábado (20/07)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-5"> Último check-list pré-batalha: trabalhos, pastas, acesso ao AVA</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Domingo (21/07)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-5"> INÍCIO OFICIAL DAS AULAS!</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Semana 6 -->
+        <div class="semana">
+            <h2>Semana 6/10: Conectando Teoria e Prática (21/07 a 27/07)</h2>
+            <div class="progresso-bar-semana">
+                <div class="progresso-bar-inner-semana" id="prog-semana-6">0%</div>
+            </div>
+            <div class="dias">
+                <div class="dia"><strong>Segunda (21/07)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-6"> Estudar Aula 1 de Segurança (SSI)</li>
+                        <li><input type="checkbox" class="cb-semana-6"> Estudar Aula 1 de Qualidade (QS)</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Terça (22/07)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-6"> Estudar Aula 1 de Sistemas (SIG)</li>
+                        <li><input type="checkbox" class="cb-semana-6"> Estudar Aula 1 de Direito (DC)</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Quarta (23/07)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-6"> Reescrever/melhorar introduções e esqueletos dos 4 trabalhos</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Quinta (24/07)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-6"> Fazer resumo conectando os temas das 4 aulas</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Sexta (25/07)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-6"> Realizar as APOLs da Aula 1 de todas as disciplinas</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Sábado (26/07)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-6"> Colocar em dia qualquer pendência</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Domingo (27/07)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-6"> Descansar</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Semana 7 -->
+        <div class="semana">
+            <h2>Semana 7/10: Ritmo da Maratona e Desenvolvimento Profundo (28/07 a 03/08)</h2>
+            <div class="progresso-bar-semana">
+                <div class="progresso-bar-inner-semana" id="prog-semana-7">0%</div>
+            </div>
+            <div class="dias">
+                <div class="dia"><strong>Segunda (28/07)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-7"> Estudar Aula 2 de SSI</li>
+                        <li><input type="checkbox" class="cb-semana-7"> Estudar Aula 2 de QS</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Terça (29/07)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-7"> Estudar Aula 2 de SIG</li>
+                        <li><input type="checkbox" class="cb-semana-7"> Estudar Aula 2 de DC</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Quarta (30/07)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-7"> Avançar nos 4 trabalhos, adicionando conteúdo relacionado à Aula 2</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Quinta (31/07)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-7"> Revisão e Sinergia: Releia resumos da Aula 1 e 2, conecte conceitos</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Sexta (01/08)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-7"> APOLs (Aulas 1 e 2) e Treino de Prova Discursiva</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Sábado (02/08)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-7"> Resgate e FOCO ADICIONAL na produção dos 4 trabalhos</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Domingo (03/08)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-7"> Descanso</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Semana 8 -->
+        <div class="semana">
+            <h2>Semana 8/10: Reforço dos Fundamentos (04/08 a 10/08)</h2>
+            <div class="progresso-bar-semana">
+                <div class="progresso-bar-inner-semana" id="prog-semana-8">0%</div>
+            </div>
+            <div class="dias">
+                <div class="dia"><strong>Segunda (04/08)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-8"> Estudar Aula 3 de SSI</li>
+                        <li><input type="checkbox" class="cb-semana-8"> Estudar Aula 3 de QS</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Terça (05/08)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-8"> Estudar Aula 3 de SIG</li>
+                        <li><input type="checkbox" class="cb-semana-8"> Estudar Aula 3 de DC</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Quarta (06/08)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-8"> FOCO CRÍTICO: ATINGIR 50% DO CORPO DOS 4 TRABALHOS ESCRITOS</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Quinta (07/08)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-8"> Revisão Profunda e Interconexão das Aulas 1-3</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Sexta (08/08)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-8"> APOLs (Aula 3) e Treino de Prova Discursiva</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Sábado (09/08)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-8"> Resgate e FOCO CRÍTICO para atingir os 50% dos trabalhos</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Domingo (10/08)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-8"> Descanso profundo</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Semana 9 -->
+        <div class="semana">
+            <h2>Semana 9/10: Mergulho Final no Conteúdo (11/08 a 17/08)</h2>
+            <div class="progresso-bar-semana">
+                <div class="progresso-bar-inner-semana" id="prog-semana-9">0%</div>
+            </div>
+            <div class="dias">
+                <div class="dia"><strong>Segunda (11/08)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-9"> Estudar Aulas 4 e 5 de SSI</li>
+                        <li><input type="checkbox" class="cb-semana-9"> Estudar Aulas 4 e 5 de QS</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Terça (12/08)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-9"> Estudar Aulas 4 e 5 de SIG</li>
+                        <li><input type="checkbox" class="cb-semana-9"> Estudar Aulas 4 e 5 de DC</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Quarta (13/08)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-9"> FOCO ABSOLUTO: FINALIZAR 95% DO CONTEÚDO BRUTO DOS 4 TRABALHOS</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Quinta (14/08)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-9"> Revisão Geral e Preparo Intensivo para Prova</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Sexta (15/08)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-9"> APOLs (Aulas 4 e 5) e Simulado de Prova Discursiva</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Sábado (16/08)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-9"> Revisão FINAL de CONTEÚDO e PRIMEIROS AJUSTES DE FORMATAÇÃO</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Domingo (17/08)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-9"> Descanso e preparo mental para a última semana</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Semana 10 -->
+        <div class="semana">
+            <h2>Semana 10/10: Fechamento Total e Entrega Antecipada (18/08 a 24/08)</h2>
+            <div class="progresso-bar-semana">
+                <div class="progresso-bar-inner-semana" id="prog-semana-10">0%</div>
+            </div>
+            <div class="dias">
+                <div class="dia"><strong>Segunda (18/08)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-10"> Estudar Aula 6 de SSI</li>
+                        <li><input type="checkbox" class="cb-semana-10"> Estudar Aula 6 de QS</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Terça (19/08)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-10"> Estudar Aula 6 de SIG</li>
+                        <li><input type="checkbox" class="cb-semana-10"> Estudar Aula 6 de DC</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Quarta (20/08)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-10"> Revisão Concentrada para Prova</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Quinta (21/08)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-10"> ÚLTIMA REVISÃO DE FORMATO e SUBMISSÃO dos 4 trabalhos</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Sexta (22/08)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-10"> Garantia APOLs e Prática final de Prova Discursiva</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Sábado (23/08)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-10"> Revisão completa dos resumos pessoais e das suas próprias APs</li>
+                    </ul>
+                </div>
+                <div class="dia"><strong>Domingo (24/08)</strong>
+                    <ul>
+                        <li><input type="checkbox" class="cb-semana-10"> Descanso e preparo mental final para as provas</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<script>
+// Função genérica para atualizar barras de todas as semanas
+function atualizarProgressoSemanas() {
+    for (let i = 1; i <= 10; i++) {
+        const cbs = document.querySelectorAll('.cb-semana-' + i);
+        const total = cbs.length;
+        const done = Array.from(cbs).filter(cb => cb.checked).length;
+        const pct = total ? Math.round((done/total)*100) : 0;
+        const barra = document.getElementById('prog-semana-' + i);
+        if (barra) {
+            barra.style.width = pct + '%';
+            barra.textContent = pct + '%';
         }
-        function setProgresso(progresso) {
-            localStorage.setItem("progressoEstudosBloco1", JSON.stringify(progresso));
-        }
+    }
+}
+// Adiciona listeners para todos os checkboxes de todas as semanas
+for (let i = 1; i <= 10; i++) {
+    const cbs = document.querySelectorAll('.cb-semana-' + i);
+    cbs.forEach(cb => {
+        cb.addEventListener('change', atualizarProgressoSemanas);
+    });
+}
 
-        // Anexos no localStorage (base64)
-        function getAnexos() {
-            return JSON.parse(localStorage.getItem("anexosEstudosBloco1") || "{}");
-        }
-        function setAnexos(anexos) {
-            localStorage.setItem("anexosEstudosBloco1", JSON.stringify(anexos));
-        }
-
-        // Notas no localStorage
-        function getNotas() {
-            return JSON.parse(localStorage.getItem("notasEstudosBloco1") || "{}");
-        }
-        function setNotas(notas) {
-            localStorage.setItem("notasEstudosBloco1", JSON.stringify(notas));
-        }
-
-        // Filtros globais
-        let filtroStatus = "";
-        let filtroDisciplina = "";
-        let filtroSemana = "";
-
-        function atualizarBarraProgresso(total, feitos) {
-            const barra = document.getElementById("progressoBarra");
-            const perc = total ? Math.round((feitos / total) * 100) : 0;
-            barra.style.width = perc + "%";
-            barra.textContent = perc + "%";
-        }
-
-        function renderizarCronograma() {
-            const progresso = getProgresso();
-            const anexos = getAnexos();
-            let totalDias = 0, diasFeitos = 0;
-            const container = document.getElementById("cronograma");
-            container.innerHTML = "";
-            cronograma.forEach((sem, idx) => {
-                if (filtroSemana && filtroSemana !== sem.semana) return;
-                const divSemana = document.createElement("div");
-                divSemana.className = "semana";
-                const h3 = document.createElement("h3");
-                h3.textContent = sem.semana;
-                divSemana.appendChild(h3);
-
-                const diasDiv = document.createElement("div");
-                diasDiv.className = "dias";
-                sem.dias.forEach((dia, dIdx) => {
-                    // Filtros
-                    if (filtroDisciplina && !(dia.disciplinas || []).includes(filtroDisciplina)) return;
-                    const key = `s${idx}d${dIdx}`;
-                    const st = progresso[key]?.status || "pendente";
-                    if (filtroStatus && st !== filtroStatus) return;
-
-                    totalDias++;
-                    const done = st === "done";
-                    if (done) diasFeitos++;
-                    const diaDiv = document.createElement("div");
-                    diaDiv.className = "dia" + (done ? " done" : st === "inprogress" ? " inprogress" : st === "review" ? " review" : "");
-                    diaDiv.tabIndex = 0;
-                    diaDiv.setAttribute("data-key", key);
-                    diaDiv.setAttribute("data-semana", sem.semana);
-                    diaDiv.setAttribute("data-dia", dia.dia);
-                    diaDiv.setAttribute("data-meta", dia.meta);
-                    diaDiv.setAttribute("data-disciplinas", dia.disciplinas.join(","));
-                    // Checkbox (não clicável diretamente)
-                    const label = document.createElement("label");
-                    label.innerHTML = `<input type="checkbox" ${done ? "checked" : ""} tabindex="-1" data-key="${key}"> <strong>${dia.dia}</strong>`;
-                    diaDiv.appendChild(label);
-                    const metaDiv = document.createElement("div");
-                    metaDiv.className = "meta";
-                    metaDiv.textContent = dia.meta;
-                    diaDiv.appendChild(metaDiv);
-                    // Anexo indicador
-                    if (anexos[key]) {
-                        const anexoIcon = document.createElement("span");
-                        anexoIcon.className = "anexo-indicador";
-                        anexoIcon.title = "Arquivo produzido/anexado";
-                        anexoIcon.innerHTML = "&#128206;";
-                        diaDiv.appendChild(anexoIcon);
-                    }
-                    // Evento de abrir modal
-                    diaDiv.addEventListener("click", abrirModalTarefa);
-                    diasDiv.appendChild(diaDiv);
-                });
-                if (diasDiv.children.length > 0) {
-                    divSemana.appendChild(diasDiv);
-                    container.appendChild(divSemana);
-                }
-            });
-            atualizarBarraProgresso(totalDias, diasFeitos);
-            atualizarGraficos();
-        }
-
-        function renderizarDisciplinasView() {
-            const progresso = getProgresso();
-            const anexos = getAnexos();
-            const container = document.getElementById("disciplinasView");
-            container.innerHTML = "";
-            disciplinas.forEach(disc => {
-                // Filtrar todas as tarefas relacionadas à disciplina
-                let tarefas = [];
-                cronograma.forEach((sem, sIdx) => {
-                    if (filtroSemana && filtroSemana !== sem.semana) return;
-                    sem.dias.forEach((dia, dIdx) => {
-                        if (dia.disciplinas && dia.disciplinas.includes(disc)) {
-                            // Filtros
-                            const key = `s${sIdx}d${dIdx}`;
-                            const st = progresso[key]?.status || "pendente";
-                            if (filtroStatus && st !== filtroStatus) return;
-                            if (filtroDisciplina && filtroDisciplina !== disc) return;
-                            tarefas.push({
-                                semana: sem.semana,
-                                dia: dia.dia,
-                                meta: dia.meta,
-                                key,
-                                status: st,
-                                done: st === "done",
-                                disciplinas: dia.disciplinas
-                            });
-                        }
-                    });
-                });
-                let feitos = tarefas.filter(t => t.done).length;
-                let total = tarefas.length;
-                if (total === 0) return;
-
-                const bloco = document.createElement("div");
-                bloco.className = "disciplina-bloco";
-                const h3 = document.createElement("h3");
-                h3.textContent = `${disc} (${feitos}/${total})`;
-                bloco.appendChild(h3);
-
-                // Barra de progresso por disciplina
-                const barra = document.createElement("div");
-                barra.className = "progresso-bar";
-                const barraInner = document.createElement("div");
-                barraInner.className = "progresso-bar-inner";
-                const perc = total ? Math.round((feitos / total) * 100) : 0;
-                barraInner.style.width = perc + "%";
-                barraInner.textContent = perc + "%";
-                barra.appendChild(barraInner);
-                bloco.appendChild(barra);
-
-                // Lista de tarefas
-                const diasDiv = document.createElement("div");
-                diasDiv.className = "dias-disc";
-                tarefas.forEach(tarefa => {
-                    const diaDiv = document.createElement("div");
-                    diaDiv.className = "dia-disc" + (tarefa.done ? " done" : tarefa.status === "inprogress" ? " inprogress" : tarefa.status === "review" ? " review" : "");
-                    diaDiv.tabIndex = 0;
-                    diaDiv.setAttribute("data-key", tarefa.key);
-                    diaDiv.setAttribute("data-semana", tarefa.semana);
-                    diaDiv.setAttribute("data-dia", tarefa.dia);
-                    diaDiv.setAttribute("data-meta", tarefa.meta);
-                    diaDiv.setAttribute("data-disciplinas", tarefa.disciplinas.join(","));
-                    // Checkbox (não clicável diretamente)
-                    const label = document.createElement("label");
-                    label.innerHTML = `<input type="checkbox" ${tarefa.done ? "checked" : ""} tabindex="-1" data-key="${tarefa.key}"> <strong>${tarefa.dia}</strong>`;
-                    diaDiv.appendChild(label);
-                    const metaDiv = document.createElement("div");
-                    metaDiv.className = "meta";
-                    metaDiv.textContent = tarefa.meta;
-                    diaDiv.appendChild(metaDiv);
-                    // Anexo indicador
-                    if (anexos[tarefa.key]) {
-                        const anexoIcon = document.createElement("span");
-                        anexoIcon.className = "anexo-indicador";
-                        anexoIcon.title = "Arquivo produzido/anexado";
-                        anexoIcon.innerHTML = "&#128206;";
-                        diaDiv.appendChild(anexoIcon);
-                    }
-                    // Evento de abrir modal
-                    diaDiv.addEventListener("click", abrirModalTarefa);
-                    diasDiv.appendChild(diaDiv);
-                });
-                bloco.appendChild(diasDiv);
-                container.appendChild(bloco);
-            });
-        }
-
-        // Modal
-        const modalBg = document.getElementById("modalBg");
-        const modalDia = document.getElementById("modalDia");
-        const modalMeta = document.getElementById("modalMeta");
-        const modalDisciplinas = document.getElementById("modalDisciplinas");
-        const modalCheckbox = document.getElementById("modalCheckbox");
-        const modalStatus = document.getElementById("modalStatus");
-        const modalNotas = document.getElementById("modalNotas");
-        const modalAnexoArea = document.getElementById("modalAnexoArea");
-        const modalAlerta = document.getElementById("modalAlerta");
-        let modalKey = null;
-
-        function abrirModalTarefa(e) {
-            if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT" || e.target.tagName === "TEXTAREA" || e.target.type === "file") return;
-            modalKey = this.getAttribute("data-key");
-            modalDia.textContent = this.getAttribute("data-dia");
-            modalMeta.textContent = this.getAttribute("data-meta");
-            // Disciplinas
-            const discArr = this.getAttribute("data-disciplinas").split(",").filter(Boolean);
-            modalDisciplinas.innerHTML = discArr.length
-                ? "Disciplinas: " + discArr.map(d => `<span>${d}</span>`).join(" ")
-                : "<span style='color:#888'>Nenhuma disciplina específica</span>";
-            // Status
-            const progresso = getProgresso();
-            const st = progresso[modalKey]?.status || "pendente";
-            modalStatus.value = st;
-            modalCheckbox.checked = st === "done";
-            // Notas
-            const notas = getNotas();
-            modalNotas.value = notas[modalKey] || "";
-            // Anexo
-            renderizarAnexoArea();
-            // Alerta
-            mostrarAlerta(st);
-            modalBg.classList.add("active");
-        }
-
-        function renderizarAnexoArea() {
-            const anexos = getAnexos();
-            modalAnexoArea.innerHTML = `
-                <label>
-                    <input type="checkbox" id="modalArquivoCheck" ${anexos[modalKey] ? "checked" : ""}>
-                    Arquivo produzido/anexado
-                </label>
-                <input type="file" id="modalArquivoInput" accept=".pdf,.doc,.docx,.txt,.jpg,.png,.jpeg">
-                <div id="modalArquivoLink"></div>
-            `;
-            // Mostrar link se houver anexo
-            if (anexos[modalKey]) {
-                const linkDiv = document.getElementById("modalArquivoLink");
-                linkDiv.innerHTML = `<span class="anexo-ok">&#10003; Arquivo salvo localmente</span>`;
-            }
-            // Eventos
-            document.getElementById("modalArquivoCheck").addEventListener("change", function() {
-                const anexos = getAnexos();
-                if (!this.checked) {
-                    delete anexos[modalKey];
-                    setAnexos(anexos);
-                    renderizarAnexoArea();
-                    renderizarCronograma();
-                    renderizarDisciplinasView();
-                }
-            });
-            document.getElementById("modalArquivoInput").addEventListener("change", function() {
-                const file = this.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const anexos = getAnexos();
-                        anexos[modalKey] = { name: file.name, data: e.target.result };
-                        setAnexos(anexos);
-                        renderizarAnexoArea();
-                        renderizarCronograma();
-                        renderizarDisciplinasView();
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-        }
-
-        modalCheckbox.addEventListener("change", function() {
-            if (!modalKey) return;
-            const progresso = getProgresso();
-            progresso[modalKey] = progresso[modalKey] || {};
-            progresso[modalKey].status = this.checked ? "done" : "pendente";
-            setProgresso(progresso);
-            renderizarCronograma();
-            renderizarDisciplinasView();
-            modalStatus.value = progresso[modalKey].status;
-            mostrarAlerta(progresso[modalKey].status);
-        });
-
-        modalStatus.addEventListener("change", function() {
-            if (!modalKey) return;
-            const progresso = getProgresso();
-            progresso[modalKey] = progresso[modalKey] || {};
-            progresso[modalKey].status = this.value;
-            setProgresso(progresso);
-            renderizarCronograma();
-            renderizarDisciplinasView();
-            modalCheckbox.checked = this.value === "done";
-            mostrarAlerta(this.value);
-        });
-
-        modalNotas.addEventListener("input", function() {
-            if (!modalKey) return;
-            const notas = getNotas();
-            notas[modalKey] = this.value;
-            setNotas(notas);
-        });
-
-        function mostrarAlerta(status) {
-            if (status === "review") {
-                modalAlerta.textContent = "Esta tarefa precisa de revisão!";
-                modalAlerta.className = "alerta urgente";
-                modalAlerta.style.display = "";
-            } else if (status === "inprogress") {
-                modalAlerta.textContent = "Esta tarefa está em andamento.";
-                modalAlerta.className = "alerta";
-                modalAlerta.style.display = "";
-            } else if (status === "pendente") {
-                modalAlerta.textContent = "Esta tarefa está pendente.";
-                modalAlerta.className = "alerta";
-                modalAlerta.style.display = "";
-            } else {
-                modalAlerta.style.display = "none";
-            }
-        }
-
-        document.getElementById("modalClose").onclick = () => modalBg.classList.remove("active");
-        modalBg.onclick = function(e) {
-            if (e.target === modalBg) modalBg.classList.remove("active");
-        };
-        document.addEventListener("keydown", function(e) {
-            if (e.key === "Escape") modalBg.classList.remove("active");
-        });
-
-        // Tabs
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-                this.classList.add('active');
-                document.getElementById('tab-' + this.dataset.tab).classList.add('active');
-            });
-        });
-
-        // Filtros
-        document.getElementById("filtroStatus").onchange = function() {
-            filtroStatus = this.value;
-            renderizarCronograma();
-            renderizarDisciplinasView();
-        };
-        document.getElementById("filtroDisciplina").onchange = function() {
-            filtroDisciplina = this.value;
-            renderizarCronograma();
-            renderizarDisciplinasView();
-        };
-        // Preencher filtro de semanas
-        const filtroSemanaSel = document.getElementById("filtroSemana");
-        cronograma.forEach(sem => {
-            const opt = document.createElement("option");
-            opt.value = sem.semana;
-            opt.textContent = sem.semana;
-            filtroSemanaSel.appendChild(opt);
-        });
-        filtroSemanaSel.onchange = function() {
-            filtroSemana = this.value;
-            renderizarCronograma();
-            renderizarDisciplinasView();
-        };
-
-        // Exportação CSV
-        document.getElementById("btnExportar").onclick = function() {
-            const progresso = getProgresso();
-            const notas = getNotas();
-            let csv = "Semana,Dia,Meta,Disciplinas,Status,Concluído,Anotações\n";
-            cronograma.forEach((sem, sIdx) => {
-                sem.dias.forEach((dia, dIdx) => {
-                    const key = `s${sIdx}d${dIdx}`;
-                    const st = progresso[key]?.status || "pendente";
-                    const done = st === "done" ? "Sim" : "";
-                    const anot = (notas[key] || "").replace(/"/g, '""');
-                    csv += `"${sem.semana}","${dia.dia}","${dia.meta}","${(dia.disciplinas||[]).join(", ")}","${statusList[st]}","${done}","${anot}"\n`;
-                });
-            });
-            const blob = new Blob([csv], {type: "text/csv"});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "progresso_estudos.csv";
-            document.body.appendChild(a);
-            a.click();
-            setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
-        };
-
-        // Gráficos
-        let graficoPizza, graficoBarra;
-        function atualizarGraficos() {
-            const progresso = getProgresso();
-            // Geral
-            let total = 0, pendente = 0, inprogress = 0, review = 0, done = 0;
-            cronograma.forEach((sem, sIdx) => {
-                sem.dias.forEach((dia, dIdx) => {
-                    const key = `s${sIdx}d${dIdx}`;
-                    const st = progresso[key]?.status || "pendente";
-                    total++;
-                    if (st === "done") done++;
-                    else if (st === "inprogress") inprogress++;
-                    else if (st === "review") review++;
-                    else pendente++;
-                });
-            });
-            // Pizza
-            const ctxPizza = document.getElementById("graficoPizza").getContext("2d");
-            if (graficoPizza) graficoPizza.destroy();
-            graficoPizza = new Chart(ctxPizza, {
-                type: "doughnut",
-                data: {
-                    labels: ["Concluído", "Em andamento", "Precisa revisão", "Pendente"],
-                    datasets: [{
-                        data: [done, inprogress, review, pendente],
-                        backgroundColor: ["#7ed957", "#f7d957", "#f77d57", "#dbe6f3"]
-                    }]
-                },
-                options: { plugins: { legend: { position: "bottom" } }, cutout: "60%" }
-            });
-            // Por disciplina
-            const porDisc = disciplinas.map(disc => {
-                let t = 0, f = 0;
-                cronograma.forEach((sem, sIdx) => {
-                    sem.dias.forEach((dia, dIdx) => {
-                        if (dia.disciplinas && dia.disciplinas.includes(disc)) {
-                            t++;
-                            const key = `s${sIdx}d${dIdx}`;
-                            if (progresso[key]?.status === "done") f++;
-                        }
-                    });
-                });
-                return t ? Math.round((f/t)*100) : 0;
-            });
-            const ctxBarra = document.getElementById("graficoBarra").getContext("2d");
-            if (graficoBarra) graficoBarra.destroy();
-            graficoBarra = new Chart(ctxBarra, {
-                type: "bar",
-                data: {
-                    labels: disciplinas,
-                    datasets: [{
-                        label: "% Concluído",
-                        data: porDisc,
-                        backgroundColor: "#2d3e50"
-                    }]
-                },
-                options: {
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true, max: 100 } }
-                }
-            });
-        }
-
-        // Inicialização
-        renderizarCronograma();
-        renderizarDisciplinasView();
-
-    </script>
+// Inicializa o progresso das semanas ao carregar a página
+document.addEventListener('DOMContentLoaded', atualizarProgressoSemanas);
+</script>
 </body>
 </html>

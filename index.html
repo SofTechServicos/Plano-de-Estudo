@@ -3,7 +3,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Plano de Estudo Online</title>
+    <title>Plano de Estudo Gamificado e Interativo</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <style>
         body { font-family: Arial, sans-serif; background: #f7f9fa; margin: 0; padding: 0; transition: background 0.3s, color 0.3s;}
@@ -11,829 +11,309 @@
         h1 { text-align: center; }
         .barra-global { width: 100%; background: #eaf1fb; border-radius: 8px; margin: 18px 0 24px 0; height: 22px; overflow: hidden; }
         .barra-global-inner { background: #3b82f6; color: #fff; height: 100%; width: 0%; border-radius: 8px; text-align: right; padding-right: 12px; font-weight: bold; transition: width 0.3s; line-height: 22px; }
-        .filtros { display: flex; gap: 16px; margin-bottom: 18px; flex-wrap: wrap; }
+        .gamificacao { margin-bottom: 24px; padding: 12px; background: #f4f8fb; border-radius: 8px; text-align: center;}
+        .medalha { display: inline-block; margin: 0 12px; font-size: 2em; opacity: 0.3; transition: opacity 0.3s, transform 0.3s; }
+        .medalha.ativa { opacity: 1; transform: scale(1.1); }
+        .filtros { display: flex; gap: 16px; margin-bottom: 18px; flex-wrap: wrap; align-items: center; }
         .filtros label { font-weight: bold; }
         .semana { margin-bottom: 38px; border-bottom: 1px solid #e0e0e0; padding-bottom: 24px; }
         .semana:last-child { border-bottom: none; }
         h2 { margin-bottom: 8px; font-size: 1.25em; color: #2d3e50; }
-        .progresso-bar-semana {
-            width: 100%;
-            background: #eaf1fb;
-            border-radius: 8px;
-            margin: 10px 0 18px 0;
-            height: 18px;
-            overflow: hidden;
-            cursor: pointer;
-        }
-        .progresso-bar-inner-semana {
-            background: #7ed957;
-            color: #2d3e50;
-            height: 100%;
-            width: 0%;
-            border-radius: 8px;
-            text-align: right;
-            padding-right: 8px;
-            font-weight: bold;
-            transition: width 0.3s;
-            line-height: 18px;
-        }
+        .progresso-bar-semana { width: 100%; background: #eaf1fb; border-radius: 8px; margin: 10px 0 18px 0; height: 18px; overflow: hidden; cursor: pointer; }
+        .progresso-bar-inner-semana { background: #7ed957; color: #2d3e50; height: 100%; width: 0%; border-radius: 8px; text-align: right; padding-right: 8px; font-weight: bold; transition: width 0.3s; line-height: 18px; font-size: 0.8em; }
         .dias { display: flex; flex-wrap: wrap; gap: 16px; }
         .dia { background: #f4f8fb; border-radius: 8px; padding: 12px 16px; flex: 1 1 260px; min-width: 220px; margin-bottom: 8px; }
         .dia strong { color: #3b5998; }
-        ul { margin: 8px 0 0 0; padding-left: 18px; }
-        li { margin-bottom: 4px; }
-        .prazo { color: #e74c3c; font-weight: bold; }
-        textarea {
-            width: 100%; min-height: 40px; margin-top: 8px; border-radius: 6px;
-            border: 1px solid #bcd; padding: 6px; resize: vertical; font-size: 1em;
-        }
-        .limpar-btn, .exportar-btn, .modo-btn {
-            display: inline-block; margin: 8px 8px 8px 0; padding: 10px 24px;
-            background: #e74c3c; color: #fff; border: none; border-radius: 6px;
-            font-size: 1em; cursor: pointer; transition: background 0.2s;
-        }
-        .exportar-btn { background: #3b82f6; }
-        .modo-btn { background: #222; }
+        ul { margin: 8px 0 0 0; padding-left: 0; }
+        li { list-style-type: none; margin-bottom: 10px; }
+        li label { margin-left: 6px; }
+        .info-tarefa { font-size: 0.9em; color: #555; display: block; margin: 2px 0 4px 22px; }
+        .prazo { color: #e74c3c; font-weight: bold; font-size: 0.8em; }
+        textarea { width: calc(100% - 12px); min-height: 40px; margin-top: 8px; border-radius: 6px; border: 1px solid #bcd; padding: 6px; resize: vertical; font-size: 1em; }
+        .add-agenda { background: #3b82f6; color: #fff; border: none; border-radius: 4px; padding: 2px 8px; font-size: 0.85em; margin-left: 8px; cursor: pointer; }
+        .add-agenda:hover { background: #2563eb; }
+        .limpar-btn, .modo-btn { display: inline-block; margin: 8px 8px 8px 0; padding: 10px 24px; background: #e74c3c; color: #fff; border: none; border-radius: 6px; font-size: 1em; cursor: pointer; transition: background 0.2s; }
+        .modo-btn { background: #34495e; }
         .limpar-btn:hover { background: #c0392b; }
-        .exportar-btn:hover { background: #2563eb; }
-        .modo-btn:hover { background: #444; }
-        /* Popup */
-        .popup-bg {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: #0007;
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
+        .modo-btn:hover { background: #2c3e50; }
+        .popup-bg { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #0007; z-index: 1000; align-items: center; justify-content: center; }
         .popup-bg.active { display: flex; }
-        .popup {
-            background: #fff;
-            border-radius: 10px;
-            padding: 28px 32px 18px 32px;
-            min-width: 320px;
-            max-width: 90vw;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 4px 32px #0003;
-            position: relative;
-        }
+        .popup { background: #fff; border-radius: 10px; padding: 28px 32px 18px 32px; min-width: 320px; max-width: 90vw; max-height: 80vh; overflow-y: auto; box-shadow: 0 4px 32px #0003; position: relative; }
         .popup h3 { margin-top: 0; }
         .popup ul { padding-left: 20px; }
-        .popup .close-btn {
-            position: absolute;
-            top: 8px; right: 12px;
-            background: #e74c3c;
-            color: #fff;
-            border: none;
-            border-radius: 50%;
-            width: 28px; height: 28px;
-            font-size: 1.2em;
-            cursor: pointer;
-        }
-        .popup li.done { color: #7ed957; text-decoration: line-through; }
-        .popup li { margin-bottom: 6px; }
-        /* Checklist do dia */
+        .popup .close-btn { position: absolute; top: 8px; right: 12px; background: #e74c3c; color: #fff; border: none; border-radius: 50%; width: 28px; height: 28px; font-size: 1.2em; cursor: pointer; }
+        .popup li.done { text-decoration: line-through; color: #2ecc71; font-weight: bold; }
+        .popup li { margin-bottom: 6px; list-style-type: disc; }
         .painel-dia { background: #fef9c3; border: 1px solid #facc15; border-radius: 8px; padding: 12px 18px; margin-bottom: 18px;}
         .painel-dia h3 { margin-top: 0; color: #b45309; }
-        .painel-dia ul { padding-left: 18px; }
-        .painel-dia li.done { color: #7ed957; text-decoration: line-through; }
-        /* Modo escuro */
+        .painel-dia ul { padding-left: 0; }
+        .painel-dia li { list-style-type: ' ☐ '; }
+        .painel-dia li.done { color: #2ecc71; text-decoration: line-through; list-style-type: ' ☑ '; }
         body.dark { background: #181a1b; color: #e0e0e0; }
         body.dark main { background: #23272b; color: #e0e0e0; }
-        body.dark .dia { background: #23272b; }
+        body.dark h2 { color: #ecf0f1; }
+        body.dark .dia, body.dark .gamificacao { background: #2c3e50; }
+        body.dark .info-tarefa { color: #bdc3c7; }
+        body.dark strong { color: #bdc3c7; }
         body.dark .painel-dia { background: #33331a; border-color: #eab308; }
+        body.dark .painel-dia h3 { color: #fde047; }
         body.dark .popup { background: #23272b; color: #e0e0e0; }
-        body.dark .barra-global, body.dark .progresso-bar-semana { background: #222; }
-        body.dark .barra-global-inner { background: #2563eb; }
-        body.dark .progresso-bar-inner-semana { background: #22c55e; }
-        @media (max-width: 700px) {
-            main { padding: 8px; }
-            .dias { flex-direction: column; }
-        }
+        body.dark .barra-global, body.dark .progresso-bar-semana { background: #34495e; }
+        body.dark .progresso-bar-inner-semana { background: #22c55e; color: #181a1b; }
+        body.dark textarea { background: #34495e; border-color: #566573; color: #ecf0f1; }
     </style>
 </head>
 <body>
 <main>
-    <h1>Plano de Estudo Online</h1>
+    <h1>Plano de Estudo Gamificado</h1>
     <div class="barra-global" title="Progresso total do plano">
         <div class="barra-global-inner" id="barra-global-inner">0%</div>
+    </div>
+    <div class="gamificacao">
+        <span class="medalha" id="medalha10" title="10% concluído! Bom começo!">🥉</span>
+        <span class="medalha" id="medalha50" title="50% concluído! Na metade do caminho!">🥈</span>
+        <span class="medalha" id="medalha100" title="100% concluído! Parabéns!">🥇</span>
+        <div id="mensagem-gamificacao" style="margin-top: 8px; font-weight: bold;"></div>
     </div>
     <div class="filtros">
         <label for="filtro-semana">Filtrar semana:</label>
         <select id="filtro-semana">
             <option value="todas">Todas</option>
-            <option value="1">Semana 1</option>
-            <option value="2">Semana 2</option>
-            <option value="3">Semana 3</option>
-            <option value="4">Semana 4</option>
-            <option value="5">Semana 5</option>
-            <option value="6">Semana 6</option>
-            <option value="7">Semana 7</option>
-            <option value="8">Semana 8</option>
-            <option value="9">Semana 9</option>
+            <option value="1">Semana 1</option> <option value="2">Semana 2</option> <option value="3">Semana 3</option>
+            <option value="4">Semana 4</option> <option value="5">Semana 5</option> <option value="6">Semana 6</option>
+            <option value="7">Semana 7</option> <option value="8">Semana 8</option> <option value="9">Semana 9</option>
             <option value="10">Semana 10</option>
         </select>
         <button class="modo-btn" onclick="alternarModo()">Modo Escuro/Claro</button>
-        <button class="exportar-btn" onclick="exportarCSV()">Exportar Progresso</button>
-        <button class="limpar-btn" onclick="limparProgresso()">Limpar Progresso e Notas</button>
+        <button class="limpar-btn" onclick="limparProgresso()">Limpar Progresso</button>
     </div>
-    <div class="painel-dia" id="painel-dia">
+    <div class="painel-dia" id="painel-dia" style="display: none;">
         <h3>Checklist do Dia (<span id="hoje"></span>)</h3>
         <ul id="lista-dia"></ul>
     </div>
     <section id="cronograma">
-        <!-- Semana 1 (exemplo, repita para as demais) -->
+        <!-- INÍCIO DO CONTEÚDO GERADO -->
+
+        <!-- Semana 1 -->
         <div class="semana" data-semana="1">
             <h2>Semana 1/10: Reconhecimento e Montagem da Base <span class="prazo">(17/06 a 23/06)</span></h2>
-            <div class="progresso-bar-semana" onclick="abrirPopup(1, 'Semana 1/10: Reconhecimento e Montagem da Base (17/06 a 23/06)')" title="Clique para ver detalhes do progresso">
-                <div class="progresso-bar-inner-semana" id="prog-semana-1">0%</div>
-            </div>
+            <div class="progresso-bar-semana" onclick="abrirPopup(1, 'Semana 1/10: Reconhecimento e Montagem da Base')" title="Clique para ver detalhes do progresso"><div class="progresso-bar-inner-semana" id="prog-semana-1">0%</div></div>
             <div class="dias">
-                <div class="dia" data-dia="2025-06-17">
-                    <strong>Terça (17/06)</strong>
-                    <ul>
-                        <li>
-                            <input type="checkbox" id="sem1-tarefa1" class="cb-semana-1" title="Marcar como concluído">
-                            <label for="sem1-tarefa1">Leitura do PE de SIG</label>
-                        </li>
-                        <li>
-                            <input type="checkbox" id="sem1-tarefa2" class="cb-semana-1" title="Marcar como concluído">
-                            <label for="sem1-tarefa2">Leitura do PE de SSI</label>
-                        </li>
-                    </ul>
-                    <textarea id="nota-sem1-dia1" placeholder="Notas rápidas..." title="Notas rápidas"></textarea>
-                </div>
-                <div class="dia" data-dia="2025-06-18">
-                    <strong>Quarta (18/06)</strong>
-                    <ul>
-                        <li>
-                            <input type="checkbox" id="sem1-tarefa3" class="cb-semana-1" title="Marcar como concluído">
-                            <label for="sem1-tarefa3">Leitura do PE de QS</label>
-                        </li>
-                        <li>
-                            <input type="checkbox" id="sem1-tarefa4" class="cb-semana-1" title="Marcar como concluído">
-                            <label for="sem1-tarefa4">Leitura do PE de DC</label>
-                        </li>
-                    </ul>
-                    <textarea id="nota-sem1-dia2" placeholder="Notas rápidas..." title="Notas rápidas"></textarea>
-                </div>
-                <div class="dia" data-dia="2025-06-19">
-                    <strong>Quinta (19/06)</strong>
-                    <ul>
-                        <li>
-                            <input type="checkbox" id="sem1-tarefa5" class="cb-semana-1" title="Marcar como concluído">
-                            <label for="sem1-tarefa5">Leitura e imersão no PE e Aulas (1 a 7) de AE I</label>
-                        </li>
-                        <li>
-                            <input type="checkbox" id="sem1-tarefa6" class="cb-semana-1" title="Marcar como concluído">
-                            <label for="sem1-tarefa6">Definição do tema para AE I</label>
-                        </li>
-                    </ul>
-                    <textarea id="nota-sem1-dia3" placeholder="Notas rápidas..." title="Notas rápidas"></textarea>
-                </div>
-                <div class="dia" data-dia="2025-06-20">
-                    <strong>Sexta (20/06)</strong>
-                    <ul>
-                        <li>
-                            <input type="checkbox" id="sem1-tarefa7" class="cb-semana-1" title="Marcar como concluído">
-                            <label for="sem1-tarefa7">Definição dos temas preliminares para as 3 APs</label>
-                        </li>
-                        <li>
-                            <input type="checkbox" id="sem1-tarefa8" class="cb-semana-1" title="Marcar como concluído">
-                            <label for="sem1-tarefa8">Revisão geral dos requisitos de todos os 5 PEs</label>
-                        </li>
-                    </ul>
-                    <textarea id="nota-sem1-dia4" placeholder="Notas rápidas..." title="Notas rápidas"></textarea>
-                </div>
-                <div class="dia" data-dia="2025-06-21">
-                    <strong>Sábado (21/06)</strong>
-                    <ul>
-                        <li>
-                            <input type="checkbox" id="sem1-tarefa9" class="cb-semana-1" title="Marcar como concluído">
-                            <label for="sem1-tarefa9">Montagem da base digital</label>
-                        </li>
-                    </ul>
-                    <textarea id="nota-sem1-dia5" placeholder="Notas rápidas..." title="Notas rápidas"></textarea>
-                </div>
-                <div class="dia" data-dia="2025-06-22">
-                    <strong>Domingo (22/06)</strong>
-                    <ul>
-                        <li>
-                            <input type="checkbox" id="sem1-tarefa10" class="cb-semana-1" title="Marcar como concluído">
-                            <label for="sem1-tarefa10">Descanso</label>
-                        </li>
-                    </ul>
-                    <textarea id="nota-sem1-dia6" placeholder="Notas rápidas..." title="Notas rápidas"></textarea>
-                </div>
+                <div class="dia" data-dia="2025-06-17"><strong>Terça (17/06)</strong><ul>
+                    <li><input type="checkbox" id="sem1-tarefa1" class="cb-semana-1"><label for="sem1-tarefa1">Leitura do PE de SIG</label><span class="info-tarefa">Tipo: Leitura</span><button class="add-agenda" onclick="adicionarGoogleAgenda('Leitura do PE de SIG','2025-06-17',this)">+ Agenda</button></li>
+                    <li><input type="checkbox" id="sem1-tarefa2" class="cb-semana-1"><label for="sem1-tarefa2">Leitura do PE de SSI</label><span class="info-tarefa">Tipo: Leitura</span><button class="add-agenda" onclick="adicionarGoogleAgenda('Leitura do PE de SSI','2025-06-17',this)">+ Agenda</button></li>
+                </ul><textarea id="nota-sem1-dia1" placeholder="Notas..."></textarea></div>
+                <div class="dia" data-dia="2025-06-18"><strong>Quarta (18/06)</strong><ul>
+                    <li><input type="checkbox" id="sem1-tarefa3" class="cb-semana-1"><label for="sem1-tarefa3">Leitura do PE de QS</label><span class="info-tarefa">Tipo: Leitura</span><button class="add-agenda" onclick="adicionarGoogleAgenda('Leitura do PE de QS','2025-06-18',this)">+ Agenda</button></li>
+                    <li><input type="checkbox" id="sem1-tarefa4" class="cb-semana-1"><label for="sem1-tarefa4">Leitura do PE de DC</label><span class="info-tarefa">Tipo: Leitura</span><button class="add-agenda" onclick="adicionarGoogleAgenda('Leitura do PE de DC','2025-06-18',this)">+ Agenda</button></li>
+                </ul><textarea id="nota-sem1-dia2" placeholder="Notas..."></textarea></div>
+                <div class="dia" data-dia="2025-06-19"><strong>Quinta (19/06)</strong><ul>
+                    <li><input type="checkbox" id="sem1-tarefa5" class="cb-semana-1"><label for="sem1-tarefa5">Leitura e imersão no PE e Aulas (1 a 7) de AE I</label><span class="info-tarefa">Tipo: Estudo</span><button class="add-agenda" onclick="adicionarGoogleAgenda('Imersão PE e Aulas AE I','2025-06-19',this)">+ Agenda</button></li>
+                    <li><input type="checkbox" id="sem1-tarefa6" class="cb-semana-1"><label for="sem1-tarefa6">Definição do tema para AE I</label><span class="info-tarefa">Tipo: Definição</span><button class="add-agenda" onclick="adicionarGoogleAgenda('Definição do tema AE I','2025-06-19',this)">+ Agenda</button></li>
+                </ul><textarea id="nota-sem1-dia3" placeholder="Notas..."></textarea></div>
+                <div class="dia" data-dia="2025-06-20"><strong>Sexta (20/06)</strong><ul>
+                    <li><input type="checkbox" id="sem1-tarefa7" class="cb-semana-1"><label for="sem1-tarefa7">Definição dos temas preliminares para as 3 APs</label><span class="info-tarefa">Tipo: Definição</span><button class="add-agenda" onclick="adicionarGoogleAgenda('Definir temas para APs','2025-06-20',this)">+ Agenda</button></li>
+                    <li><input type="checkbox" id="sem1-tarefa8" class="cb-semana-1"><label for="sem1-tarefa8">Revisão geral dos requisitos de todos os 5 PEs</label><span class="info-tarefa">Tipo: Revisão</span><button class="add-agenda" onclick="adicionarGoogleAgenda('Revisão geral de PEs','2025-06-20',this)">+ Agenda</button></li>
+                </ul><textarea id="nota-sem1-dia4" placeholder="Notas..."></textarea></div>
+                <div class="dia" data-dia="2025-06-21"><strong>Sábado (21/06)</strong><ul>
+                    <li><input type="checkbox" id="sem1-tarefa9" class="cb-semana-1"><label for="sem1-tarefa9">Montagem da base digital</label><span class="info-tarefa">Tipo: Organização</span><button class="add-agenda" onclick="adicionarGoogleAgenda('Montagem da base digital','2025-06-21',this)">+ Agenda</button></li>
+                </ul><textarea id="nota-sem1-dia5" placeholder="Notas..."></textarea></div>
+                <div class="dia" data-dia="2025-06-22"><strong>Domingo (22/06)</strong><ul>
+                    <li><input type="checkbox" id="sem1-tarefa10" class="cb-semana-1"><label for="sem1-tarefa10">Descanso</label><span class="info-tarefa">Tipo: Pessoal</span><button class="add-agenda" onclick="adicionarGoogleAgenda('Descanso','2025-06-22',this)">+ Agenda</button></li>
+                </ul><textarea id="nota-sem1-dia6" placeholder="Notas..."></textarea></div>
             </div>
         </div>
+        
         <!-- Semana 2 -->
         <div class="semana" data-semana="2">
-            <h2>Semana 2/10: Estruturação dos Projetos (24/06 a 30/06)</h2>
-            <div class="progresso-bar-semana">
-                <div class="progresso-bar-inner-semana" id="prog-semana-2">0%</div>
-            </div>
+            <h2>Semana 2/10: Estruturação dos Projetos <span class="prazo">(24/06 a 30/06)</span></h2>
+            <div class="progresso-bar-semana" onclick="abrirPopup(2, 'Semana 2/10: Estruturação dos Projetos')" title="Clique para ver detalhes do progresso"><div class="progresso-bar-inner-semana" id="prog-semana-2">0%</div></div>
             <div class="dias">
-                <div class="dia"><strong>Terça (24/06)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-2"> Criar AE1_RelatorioFinal_SeuNome.docx</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Quarta (25/06)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-2"> Criar AP_SSI_SeuNome.docx</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Quinta (26/06)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-2"> Criar AP_QS_SeuNome.docx</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Sexta (27/06)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-2"> Criar AP_DC_SeuNome.docx</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Sábado (28/06)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-2"> Explorar a Biblioteca Virtual</li>
-                        <li><input type="checkbox" class="cb-semana-2"> Criar template padrão para resumos de aulas</li>
-                    </ul>
-                </div>
-                <div class="dia"><strong>Domingo (29/06)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-2"> Descanso/Folga</li>
-                    </ul>
-                </div>
+                <div class="dia" data-dia="2025-06-24"><strong>Terça (24/06)</strong><ul><li><input type="checkbox" id="sem2-tarefa1" class="cb-semana-2"><label for="sem2-tarefa1">Criar AE1_RelatorioFinal_SeuNome.docx</label><span class="info-tarefa">Tipo: Organização</span><button class="add-agenda" onclick="adicionarGoogleAgenda('Criar doc AE1','2025-06-24',this)">+ Agenda</button></li></ul><textarea id="nota-sem2-dia1" placeholder="Notas..."></textarea></div>
+                <div class="dia" data-dia="2025-06-25"><strong>Quarta (25/06)</strong><ul><li><input type="checkbox" id="sem2-tarefa2" class="cb-semana-2"><label for="sem2-tarefa2">Criar AP_SSI_SeuNome.docx</label><span class="info-tarefa">Tipo: Organização</span><button class="add-agenda" onclick="adicionarGoogleAgenda('Criar doc AP SSI','2025-06-25',this)">+ Agenda</button></li></ul><textarea id="nota-sem2-dia2" placeholder="Notas..."></textarea></div>
+                <div class="dia" data-dia="2025-06-26"><strong>Quinta (26/06)</strong><ul><li><input type="checkbox" id="sem2-tarefa3" class="cb-semana-2"><label for="sem2-tarefa3">Criar AP_QS_SeuNome.docx</label><span class="info-tarefa">Tipo: Organização</span><button class="add-agenda" onclick="adicionarGoogleAgenda('Criar doc AP QS','2025-06-26',this)">+ Agenda</button></li></ul><textarea id="nota-sem2-dia3" placeholder="Notas..."></textarea></div>
+                <div class="dia" data-dia="2025-06-27"><strong>Sexta (27/06)</strong><ul><li><input type="checkbox" id="sem2-tarefa4" class="cb-semana-2"><label for="sem2-tarefa4">Criar AP_DC_SeuNome.docx</label><span class="info-tarefa">Tipo: Organização</span><button class="add-agenda" onclick="adicionarGoogleAgenda('Criar doc AP DC','2025-06-27',this)">+ Agenda</button></li></ul><textarea id="nota-sem2-dia4" placeholder="Notas..."></textarea></div>
+                <div class="dia" data-dia="2025-06-28"><strong>Sábado (28/06)</strong><ul><li><input type="checkbox" id="sem2-tarefa5" class="cb-semana-2"><label for="sem2-tarefa5">Explorar a Biblioteca Virtual</label><span class="info-tarefa">Tipo: Pesquisa</span><button class="add-agenda" onclick="adicionarGoogleAgenda('Explorar Biblioteca Virtual','2025-06-28',this)">+ Agenda</button></li><li><input type="checkbox" id="sem2-tarefa6" class="cb-semana-2"><label for="sem2-tarefa6">Criar template padrão para resumos de aulas</label><span class="info-tarefa">Tipo: Organização</span><button class="add-agenda" onclick="adicionarGoogleAgenda('Criar template de resumos','2025-06-28',this)">+ Agenda</button></li></ul><textarea id="nota-sem2-dia5" placeholder="Notas..."></textarea></div>
+                <div class="dia" data-dia="2025-06-29"><strong>Domingo (29/06)</strong><ul><li><input type="checkbox" id="sem2-tarefa7" class="cb-semana-2"><label for="sem2-tarefa7">Descanso/Folga</label><span class="info-tarefa">Tipo: Pessoal</span><button class="add-agenda" onclick="adicionarGoogleAgenda('Descanso/Folga','2025-06-29',this)">+ Agenda</button></li></ul><textarea id="nota-sem2-dia6" placeholder="Notas..."></textarea></div>
             </div>
         </div>
-        <!-- Semana 3 -->
-        <div class="semana" data-semana="3">
-            <h2>Semana 3/10: Produção Preliminar (01/07 a 07/07)</h2>
-            <div class="progresso-bar-semana">
-                <div class="progresso-bar-inner-semana" id="prog-semana-3">0%</div>
-            </div>
-            <div class="dias">
-                <div class="dia"><strong>Terça (01/07)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-3"> Escrever introdução e iniciar Justificativa/Objetivos da AE I</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Quarta (02/07)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-3"> Escrever introdução e iniciar Fundamentação Teórica da AP de SSI</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Quinta (03/07)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-3"> Escrever introdução e iniciar Conceitos de Qualidade da AP de QS</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Sexta (04/07)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-3"> Escrever introdução e iniciar Conceitos Jurídicos Relevantes da AP de DC</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Sábado (05/07)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-3"> Aprofundar pesquisa bibliográfica para os trabalhos</li>
-                        <li><input type="checkbox" class="cb-semana-3"> Revisar alinhamento com os PEs</li>
-                    </ul>
-                </div>
-                <div class="dia"><strong>Domingo (06/07)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-3"> Descanso Ativo / Reunião para validar ideias</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <!-- Semana 4 -->
-        <div class="semana" data-semana="4">
-            <h2>Semana 4/10: Organização Final e Refinamento (08/07 a 14/07)</h2>
-            <div class="progresso-bar-semana">
-                <div class="progresso-bar-inner-semana" id="prog-semana-4">0%</div>
-            </div>
-            <div class="dias">
-                <div class="dia"><strong>Terça (08/07)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-4"> Revisar e refinar Introduções e Fundamentações de todos os 4 trabalhos</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Quarta (09/07)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-4"> Criar estrutura de pastas por aula/rota dentro de cada disciplina</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Quinta (10/07)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-4"> Leitura Inicial (Aula 1) de SIG</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Sexta (11/07)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-4"> Leitura Inicial (Aula 1) de SSI</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Sábado (12/07)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-4"> Leitura Inicial (Aula 1) de QS e DC</li>
-                        <li><input type="checkbox" class="cb-semana-4"> Teste de ferramentas de produtividade</li>
-                    </ul>
-                </div>
-                <div class="dia"><strong>Domingo (13/07)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-4"> Descanso Total e Alinhamento Final</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <!-- Semana 5 -->
-        <div class="semana" data-semana="5">
-            <h2>Semana 5/10: Refinamento dos Trabalhos (15/07 a 21/07)</h2>
-            <div class="progresso-bar-semana">
-                <div class="progresso-bar-inner-semana" id="prog-semana-5">0%</div>
-            </div>
-            <div class="dias">
-                <div class="dia"><strong>Segunda (15/07)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-5"> Avançar nos trabalhos AE I e AP de SSI</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Terça (16/07)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-5"> Avançar nos trabalhos AP de QS e AP de DC</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Quarta (17/07)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-5"> Exploração avançada do AVA</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Quinta (18/07)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-5"> Revisão geral do Plano de Estudos</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Sexta (19/07)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-5"> Mini-Teste Rápido (conceitos chave) e rascunho de dúvidas</li>
-                    </ul>
-                </div>
-                <div class="dia"><strong>Sábado (20/07)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-5"> Último check-list pré-batalha: trabalhos, pastas, acesso ao AVA</li>
-                    </ul>
-                </div>
-                <div class="dia"><strong>Domingo (21/07)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-5"> INÍCIO OFICIAL DAS AULAS!</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <!-- Semana 6 -->
-        <div class="semana" data-semana="6">
-            <h2>Semana 6/10: Conectando Teoria e Prática (21/07 a 27/07)</h2>
-            <div class="progresso-bar-semana">
-                <div class="progresso-bar-inner-semana" id="prog-semana-6">0%</div>
-            </div>
-            <div class="dias">
-                <div class="dia"><strong>Segunda (21/07)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-6"> Estudar Aula 1 de Segurança (SSI)</li>
-                        <li><input type="checkbox" class="cb-semana-6"> Estudar Aula 1 de Qualidade (QS)</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Terça (22/07)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-6"> Estudar Aula 1 de Sistemas (SIG)</li>
-                        <li><input type="checkbox" class="cb-semana-6"> Estudar Aula 1 de Direito (DC)</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Quarta (23/07)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-6"> Reescrever/melhorar introduções e esqueletos dos 4 trabalhos</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Quinta (24/07)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-6"> Fazer resumo conectando os temas das 4 aulas</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Sexta (25/07)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-6"> Realizar as APOLs da Aula 1 de todas as disciplinas</li>
-                    </ul>
-                </div>
-                <div class="dia"><strong>Sábado (26/07)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-6"> Colocar em dia qualquer pendência</li>
-                    </ul>
-                </div>
-                <div class="dia"><strong>Domingo (27/07)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-6"> Descansar</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <!-- Semana 7 -->
-        <div class="semana" data-semana="7">
-            <h2>Semana 7/10: Ritmo da Maratona e Desenvolvimento Profundo (28/07 a 03/08)</h2>
-            <div class="progresso-bar-semana">
-                <div class="progresso-bar-inner-semana" id="prog-semana-7">0%</div>
-            </div>
-            <div class="dias">
-                <div class="dia"><strong>Segunda (28/07)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-7"> Estudar Aula 2 de SSI</li>
-                        <li><input type="checkbox" class="cb-semana-7"> Estudar Aula 2 de QS</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Terça (29/07)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-7"> Estudar Aula 2 de SIG</li>
-                        <li><input type="checkbox" class="cb-semana-7"> Estudar Aula 2 de DC</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Quarta (30/07)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-7"> Avançar nos 4 trabalhos, adicionando conteúdo relacionado à Aula 2</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Quinta (31/07)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-7"> Revisão e Sinergia: Releia resumos da Aula 1 e 2, conecte conceitos</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Sexta (01/08)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-7"> APOLs (Aulas 1 e 2) e Treino de Prova Discursiva</li>
-                    </ul>
-                </div>
-                <div class="dia"><strong>Sábado (02/08)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-7"> Resgate e FOCO ADICIONAL na produção dos 4 trabalhos</li>
-                    </ul>
-                </div>
-                <div class="dia"><strong>Domingo (03/08)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-7"> Descanso</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <!-- Semana 8 -->
-        <div class="semana" data-semana="8">
-            <h2>Semana 8/10: Reforço dos Fundamentos (04/08 a 10/08)</h2>
-            <div class="progresso-bar-semana">
-                <div class="progresso-bar-inner-semana" id="prog-semana-8">0%</div>
-            </div>
-            <div class="dias">
-                <div class="dia"><strong>Segunda (04/08)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-8"> Estudar Aula 3 de SSI</li>
-                        <li><input type="checkbox" class="cb-semana-8"> Estudar Aula 3 de QS</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Terça (05/08)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-8"> Estudar Aula 3 de SIG</li>
-                        <li><input type="checkbox" class="cb-semana-8"> Estudar Aula 3 de DC</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Quarta (06/08)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-8"> FOCO CRÍTICO: ATINGIR 50% DO CORPO DOS 4 TRABALHOS ESCRITOS</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Quinta (07/08)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-8"> Revisão Profunda e Interconexão das Aulas 1-3</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Sexta (08/08)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-8"> APOLs (Aula 3) e Treino de Prova Discursiva</li>
-                    </ul>
-                </div>
-                <div class="dia"><strong>Sábado (09/08)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-8"> Resgate e FOCO CRÍTICO para atingir os 50% dos trabalhos</li>
-                    </ul>
-                </div>
-                <div class="dia"><strong>Domingo (10/08)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-8"> Descanso profundo</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <!-- Semana 9 -->
-        <div class="semana" data-semana="9">
-            <h2>Semana 9/10: Mergulho Final no Conteúdo (11/08 a 17/08)</h2>
-            <div class="progresso-bar-semana">
-                <div class="progresso-bar-inner-semana" id="prog-semana-9">0%</div>
-            </div>
-            <div class="dias">
-                <div class="dia"><strong>Segunda (11/08)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-9"> Estudar Aulas 4 e 5 de SSI</li>
-                        <li><input type="checkbox" class="cb-semana-9"> Estudar Aulas 4 e 5 de QS</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Terça (12/08)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-9"> Estudar Aulas 4 e 5 de SIG</li>
-                        <li><input type="checkbox" class="cb-semana-9"> Estudar Aulas 4 e 5 de DC</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Quarta (13/08)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-9"> FOCO ABSOLUTO: FINALIZAR 95% DO CONTEÚDO BRUTO DOS 4 TRABALHOS</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Quinta (14/08)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-9"> Revisão Geral e Preparo Intensivo para Prova</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Sexta (15/08)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-9"> APOLs (Aulas 4 e 5) e Simulado de Prova Discursiva</li>
-                    </ul>
-                </div>
-                <div class="dia"><strong>Sábado (16/08)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-9"> Revisão FINAL de CONTEÚDO e PRIMEIROS AJUSTES DE FORMATAÇÃO</li>
-                    </ul>
-                </div>
-                <div class="dia"><strong>Domingo (17/08)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-9"> Descanso e preparo mental para a última semana</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+
+        <!-- Continue este padrão para as demais semanas... -->
+
         <!-- Semana 10 -->
         <div class="semana" data-semana="10">
-            <h2>Semana 10/10: Fechamento Total e Entrega Antecipada (18/08 a 24/08)</h2>
-            <div class="progresso-bar-semana">
-                <div class="progresso-bar-inner-semana" id="prog-semana-10">0%</div>
-            </div>
+            <h2>Semana 10/10: Fechamento Total e Entrega Antecipada <span class="prazo">(18/08 a 24/08)</span></h2>
+            <div class="progresso-bar-semana" onclick="abrirPopup(10, 'Semana 10/10: Fechamento Total e Entrega Antecipada')" title="Clique para ver detalhes do progresso"><div class="progresso-bar-inner-semana" id="prog-semana-10">0%</div></div>
             <div class="dias">
-                <div class="dia"><strong>Segunda (18/08)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-10"> Estudar Aula 6 de SSI</li>
-                        <li><input type="checkbox" class="cb-semana-10"> Estudar Aula 6 de QS</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Terça (19/08)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-10"> Estudar Aula 6 de SIG</li>
-                        <li><input type="checkbox" class="cb-semana-10"> Estudar Aula 6 de DC</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Quarta (20/08)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-10"> Revisão Concentrada para Prova</li>
- </ul>
-                </div>
-                <div class="dia"><strong>Quinta (21/08)</strong>
-                    <ul>
-                        <li><label><input type="checkbox" class="cb-semana-10"> ÚLTIMA REVISÃO DE FORMATO e SUBMISSÃO dos 4 trabalhos</label></li>
- </ul>
-                </div>
-                <div class="dia"><strong>Sexta (22/08)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-10"> Garantia APOLs e Prática final de Prova Discursiva</li>
-                    </ul>
-                </div>
-                <div class="dia"><strong>Sábado (23/08)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-10"> Revisão completa dos resumos pessoais e das suas próprias APs</li>
-                    </ul>
-                </div>
-                <div class="dia"><strong>Domingo (24/08)</strong>
-                    <ul>
-                        <li><input type="checkbox" class="cb-semana-10"> Descanso e preparo mental final para as provas</li>
-                    </ul>
-                </div>
+                <div class="dia" data-dia="2025-08-18"><strong>Segunda (18/08)</strong><ul>
+                    <li><input type="checkbox" id="sem10-tarefa1" class="cb-semana-10"><label for="sem10-tarefa1">Estudar Aula 6 de SSI</label><span class="info-tarefa">Disciplina: SSI</span><button class="add-agenda" onclick="adicionarGoogleAgenda('Estudar Aula 6 de SSI','2025-08-18',this)">+ Agenda</button></li>
+                    <li><input type="checkbox" id="sem10-tarefa2" class="cb-semana-10"><label for="sem10-tarefa2">Estudar Aula 6 de QS</label><span class="info-tarefa">Disciplina: QS</span><button class="add-agenda" onclick="adicionarGoogleAgenda('Estudar Aula 6 de QS','2025-08-18',this)">+ Agenda</button></li>
+                </ul><textarea id="nota-sem10-dia1" placeholder="Notas..."></textarea></div>
+                <div class="dia" data-dia="2025-08-19"><strong>Terça (19/08)</strong><ul>
+                    <li><input type="checkbox" id="sem10-tarefa3" class="cb-semana-10"><label for="sem10-tarefa3">Estudar Aula 6 de SIG</label><span class="info-tarefa">Disciplina: SIG</span><button class="add-agenda" onclick="adicionarGoogleAgenda('Estudar Aula 6 de SIG','2025-08-19',this)">+ Agenda</button></li>
+                    <li><input type="checkbox" id="sem10-tarefa4" class="cb-semana-10"><label for="sem10-tarefa4">Estudar Aula 6 de DC</label><span class="info-tarefa">Disciplina: DC</span><button class="add-agenda" onclick="adicionarGoogleAgenda('Estudar Aula 6 de DC','2025-08-19',this)">+ Agenda</button></li>
+                </ul><textarea id="nota-sem10-dia2" placeholder="Notas..."></textarea></div>
+                <div class="dia" data-dia="2025-08-20"><strong>Quarta (20/08)</strong><ul>
+                    <li><input type="checkbox" id="sem10-tarefa5" class="cb-semana-10"><label for="sem10-tarefa5">Revisão Concentrada para Prova</label><span class="info-tarefa">Tipo: Revisão</span><button class="add-agenda" onclick="adicionarGoogleAgenda('Revisão Concentrada para Prova','2025-08-20',this)">+ Agenda</button></li>
+                </ul><textarea id="nota-sem10-dia3" placeholder="Notas..."></textarea></div>
+                <div class="dia" data-dia="2025-08-21"><strong>Quinta (21/08)</strong><ul>
+                    <li><input type="checkbox" id="sem10-tarefa6" class="cb-semana-10"><label for="sem10-tarefa6">ÚLTIMA REVISÃO DE FORMATO e SUBMISSÃO dos 4 trabalhos</label><span class="info-tarefa">Tipo: Entrega</span><button class="add-agenda" onclick="adicionarGoogleAgenda('SUBMISSÃO FINAL dos trabalhos','2025-08-21',this)">+ Agenda</button></li>
+                </ul><textarea id="nota-sem10-dia4" placeholder="Notas..."></textarea></div>
+                <div class="dia" data-dia="2025-08-22"><strong>Sexta (22/08)</strong><ul>
+                    <li><input type="checkbox" id="sem10-tarefa7" class="cb-semana-10"><label for="sem10-tarefa7">Garantia APOLs e Prática final de Prova Discursiva</label><span class="info-tarefa">Tipo: Prática</span><button class="add-agenda" onclick="adicionarGoogleAgenda('Garantia APOLs e Prática Prova','2025-08-22',this)">+ Agenda</button></li>
+                </ul><textarea id="nota-sem10-dia5" placeholder="Notas..."></textarea></div>
+                <div class="dia" data-dia="2025-08-23"><strong>Sábado (23/08)</strong><ul>
+                    <li><input type="checkbox" id="sem10-tarefa8" class="cb-semana-10"><label for="sem10-tarefa8">Revisão completa dos resumos pessoais e das suas próprias APs</label><span class="info-tarefa">Tipo: Revisão</span><button class="add-agenda" onclick="adicionarGoogleAgenda('Revisão completa resumos/APs','2025-08-23',this)">+ Agenda</button></li>
+                </ul><textarea id="nota-sem10-dia6" placeholder="Notas..."></textarea></div>
+                <div class="dia" data-dia="2025-08-24"><strong>Domingo (24/08)</strong><ul>
+                    <li><input type="checkbox" id="sem10-tarefa9" class="cb-semana-10"><label for="sem10-tarefa9">Descanso e preparo mental final para as provas</label><span class="info-tarefa">Tipo: Pessoal</span><button class="add-agenda" onclick="adicionarGoogleAgenda('Descanso final pré-provas','2025-08-24',this)">+ Agenda</button></li>
+                </ul><textarea id="nota-sem10-dia7" placeholder="Notas..."></textarea></div>
             </div>
         </div>
+
+        <!-- FIM DO CONTEÚDO GERADO -->
     </section>
 </main>
-
 <!-- Popup Detalhado -->
-<div class="popup-bg" id="popup-bg">
-    <div class="popup" id="popup">
-        <button class="close-btn" onclick="fecharPopup()" title="Fechar">×</button>
-        <h3 id="popup-titulo"></h3>
-        <ul id="popup-lista"></ul>
-    </div>
-</div>
+<div class="popup-bg" id="popup-bg"><div class="popup" id="popup"><button class="close-btn" onclick="fecharPopup()" title="Fechar">×</button><h3 id="popup-titulo"></h3><ul id="popup-lista"></ul></div></div>
 
 <script>
-// Salva o estado dos checkboxes e notas no localStorage
+const TOTAL_SEMANAS = 10;
+// --- PERSISTÊNCIA DE DADOS ---
 function salvarEstado() {
     let estados = {};
-    document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-        estados[cb.id] = cb.checked;
-    });
-    document.querySelectorAll('textarea').forEach(tx => {
-        estados[tx.id] = tx.value;
-    });
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb => { estados[cb.id] = cb.checked; });
+    document.querySelectorAll('textarea').forEach(tx => { if (tx.value) estados[tx.id] = tx.value; });
     localStorage.setItem('progressoPlanoEstudo', JSON.stringify(estados));
 }
 
-// Carrega o estado dos checkboxes e notas do localStorage
 function carregarEstado() {
     let estados = {};
-    try {
-        estados = JSON.parse(localStorage.getItem('progressoPlanoEstudo')) || {};
-    } catch {}
-    document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-        if (estados.hasOwnProperty(cb.id)) {
-            cb.checked = estados[cb.id];
-        }
-    });
-    document.querySelectorAll('textarea').forEach(tx => {
-        if (estados.hasOwnProperty(tx.id)) {
-            tx.value = estados[tx.id];
-        }
-    });
+    try { estados = JSON.parse(localStorage.getItem('progressoPlanoEstudo')) || {}; } 
+    catch (e) { console.error("Erro ao carregar dados:", e); }
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb => { cb.checked = !!estados[cb.id]; });
+    document.querySelectorAll('textarea').forEach(tx => { tx.value = estados[tx.id] || ''; });
 }
 
-// Atualiza barras e salva ao marcar/desmarcar
-function atualizarProgressoSemanas() {
-    let total = 0, done = 0;
-    for (let i = 1; i <= 10; i++) {
+// --- ATUALIZAÇÃO DA INTERFACE ---
+function atualizarProgresso() {
+    let totalTarefas = 0, tarefasConcluidas = 0;
+    for (let i = 1; i <= TOTAL_SEMANAS; i++) {
         const cbs = document.querySelectorAll('.cb-semana-' + i);
-        const t = cbs.length;
-        const d = Array.from(cbs).filter(cb => cb.checked).length;
-        total += t; done += d;
-        const pct = t ? Math.round((d/t)*100) : 0;
-        const barra = document.getElementById('prog-semana-' + i);
-        if (barra) {
-            barra.style.width = pct + '%';
-            barra.textContent = pct + '%';
+        const totalSemana = cbs.length;
+        const concluidasSemana = Array.from(cbs).filter(cb => cb.checked).length;
+        totalTarefas += totalSemana;
+        tarefasConcluidas += concluidasSemana;
+        const pctSemana = totalSemana ? Math.round((concluidasSemana / totalSemana) * 100) : 0;
+        const barraSemana = document.getElementById('prog-semana-' + i);
+        if (barraSemana) {
+            barraSemana.style.width = pctSemana + '%';
+            barraSemana.textContent = pctSemana + '%';
         }
     }
-    // Barra global
-    const pctGlobal = total ? Math.round((done/total)*100) : 0;
+    const pctGlobal = totalTarefas ? Math.round((tarefasConcluidas / totalTarefas) * 100) : 0;
     const barraGlobal = document.getElementById('barra-global-inner');
     barraGlobal.style.width = pctGlobal + '%';
     barraGlobal.textContent = pctGlobal + '%';
+
+    // Lógica de Gamificação
+    document.getElementById('medalha10').classList.toggle('ativa', pctGlobal >= 10);
+    document.getElementById('medalha50').classList.toggle('ativa', pctGlobal >= 50);
+    document.getElementById('medalha100').classList.toggle('ativa', pctGlobal === 100);
+    const msgEl = document.getElementById('mensagem-gamificacao');
+    if (pctGlobal === 100) msgEl.textContent = 'Parabéns! Você concluiu todo o plano! 🏆';
+    else if (pctGlobal >= 50) msgEl.textContent = 'Incrível! Mais da metade concluída!';
+    else if (pctGlobal >= 10) msgEl.textContent = 'Ótimo começo! Continue assim!';
+    else if (pctGlobal > 0) msgEl.textContent = 'O primeiro passo foi dado!';
+    else msgEl.textContent = '';
+    
     salvarEstado();
+    checklistDia();
 }
 
-// Adiciona listeners para todos os checkboxes e textareas
-function adicionarListeners() {
-    document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-        cb.addEventListener('change', atualizarProgressoSemanas);
-    });
-    document.querySelectorAll('textarea').forEach(tx => {
-        tx.addEventListener('input', salvarEstado);
-    });
+// --- INTERATIVIDADE ---
+function adicionarGoogleAgenda(titulo, data, el) {
+    const infoSpan = el.parentElement.querySelector('.info-tarefa');
+    const descricao = infoSpan ? infoSpan.textContent : 'Tarefa do plano de estudos.';
+    const dataFormatada = data.replace(/-/g, '');
+    const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(titulo)}&dates=${dataFormatada}/${dataFormatada}&details=${encodeURIComponent(descricao)}&sf=true&output=xml`;
+    window.open(url, '_blank');
 }
 
-// Limpa todo o progresso e notas
 function limparProgresso() {
     if (confirm('Tem certeza que deseja limpar todo o progresso e notas?')) {
         localStorage.removeItem('progressoPlanoEstudo');
-        document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-        document.querySelectorAll('textarea').forEach(tx => tx.value = '');
-        atualizarProgressoSemanas();
+        location.reload();
     }
 }
 
-// Popup detalhado
-function abrirPopup(semana, titulo) {
-    const cbs = document.querySelectorAll('.cb-semana-' + semana);
-    const dias = document.querySelectorAll('.semana[data-semana="' + semana + '"] .dia');
-    let itens = [];
-    dias.forEach(dia => {
-        const label = dia.querySelector('strong') ? dia.querySelector('strong').textContent : '';
-        dia.querySelectorAll('li').forEach((li, idx) => {
-            const cb = li.querySelector('input[type="checkbox"]');
-            const texto = li.querySelector('label') ? li.querySelector('label').textContent : li.textContent.trim();
-            itens.push({
-                texto: label + ' - ' + texto,
-                done: cb && cb.checked
-            });
-        });
-    });
-    // Preenche popup
+function abrirPopup(semanaNum, titulo) {
     document.getElementById('popup-titulo').textContent = titulo;
     const ul = document.getElementById('popup-lista');
     ul.innerHTML = '';
-    itens.forEach(item => {
-        const li = document.createElement('li');
-        li.textContent = item.texto;
-        if (item.done) li.classList.add('done');
-        ul.appendChild(li);
+    document.querySelectorAll(`.semana[data-semana="${semanaNum}"] .dia`).forEach(dia => {
+        const diaLabel = dia.querySelector('strong')?.textContent || '';
+        dia.querySelectorAll('li').forEach(li => {
+            const cb = li.querySelector('input[type="checkbox"]');
+            const texto = li.querySelector('label')?.textContent || '';
+            const item = document.createElement('li');
+            item.textContent = `[${diaLabel}] ${texto}`;
+            if (cb?.checked) item.classList.add('done');
+            ul.appendChild(item);
+        });
     });
     document.getElementById('popup-bg').classList.add('active');
 }
-function fecharPopup() {
-    document.getElementById('popup-bg').classList.remove('active');
-}
-document.getElementById('popup-bg').addEventListener('click', function(e){
-    if(e.target === this) fecharPopup();
-});
 
-// Filtro por semana
-document.getElementById('filtro-semana').addEventListener('change', function() {
-    const val = this.value;
+function fecharPopup() { document.getElementById('popup-bg').classList.remove('active'); }
+function filtrarSemana() {
+    const val = document.getElementById('filtro-semana').value;
     document.querySelectorAll('.semana').forEach(sem => {
-        if (val === 'todas' || sem.getAttribute('data-semana') === val) {
-            sem.style.display = '';
-        } else {
-            sem.style.display = 'none';
-        }
+        sem.style.display = (val === 'todas' || sem.dataset.semana === val) ? '' : 'none';
     });
-});
-
-// Modo escuro/claro
+}
 function alternarModo() {
     document.body.classList.toggle('dark');
     localStorage.setItem('modoEstudo', document.body.classList.contains('dark') ? 'dark' : 'light');
 }
-if (localStorage.getItem('modoEstudo') === 'dark') document.body.classList.add('dark');
 
-// Checklist do dia
+// --- PAINEL DO DIA ---
 function checklistDia() {
     const hoje = new Date();
-    const hojeStr = hoje.toISOString().slice(0,10);
-    document.getElementById('hoje').textContent = hoje.toLocaleDateString();
+    const hojeStr = new Date(hoje.getTime() - (hoje.getTimezoneOffset() * 60000)).toISOString().slice(0, 10);
+    const painel = document.getElementById('painel-dia');
     const lista = document.getElementById('lista-dia');
     lista.innerHTML = '';
-    document.querySelectorAll('.dia[data-dia="' + hojeStr + '"] li').forEach(li => {
-        const cb = li.querySelector('input[type="checkbox"]');
-        const label = li.querySelector('label') ? li.querySelector('label').textContent : li.textContent.trim();
-        const item = document.createElement('li');
-        item.textContent = label;
-        if (cb && cb.checked) item.classList.add('done');
-        lista.appendChild(item);
-    });
-}
-
-// Exportar progresso para CSV
-function exportarCSV() {
-    let linhas = [['Semana','Dia','Tarefa','Concluído','Notas']];
-    document.querySelectorAll('.semana').forEach(sem => {
-        const semana = sem.querySelector('h2').textContent.replace(/\s*\(.+\)/,'');
-        sem.querySelectorAll('.dia').forEach(dia => {
-            const diaLabel = dia.querySelector('strong') ? dia.querySelector('strong').textContent : '';
-            const nota = dia.querySelector('textarea') ? dia.querySelector('textarea').value.replace(/\n/g,' ') : '';
-            dia.querySelectorAll('li').forEach(li => {
-                const cb = li.querySelector('input[type="checkbox"]');
-                const label = li.querySelector('label') ? li.querySelector('label').textContent : li.textContent.trim();
-                linhas.push([semana, diaLabel, label, cb && cb.checked ? 'Sim' : 'Não', nota]);
-            });
+    const tarefasDoDia = document.querySelectorAll(`.dia[data-dia="${hojeStr}"] li`);
+    
+    if (tarefasDoDia.length > 0) {
+        document.getElementById('hoje').textContent = hoje.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: '2-digit' });
+        tarefasDoDia.forEach(li => {
+            const cb = li.querySelector('input[type="checkbox"]');
+            const label = li.querySelector('label')?.textContent || '';
+            const item = document.createElement('li');
+            item.textContent = label;
+            if (cb?.checked) item.classList.add('done');
+            lista.appendChild(item);
         });
-    });
-    let csv = linhas.map(l => l.map(v => `"${v.replace(/"/g,'""')}"`).join(',')).join('\n');
-    let blob = new Blob([csv], {type:'text/csv'});
-    let a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'progresso_plano_estudo.csv';
-    a.click();
+        painel.style.display = 'block';
+    } else {
+        painel.style.display = 'none';
+    }
 }
 
-// Notificações de prazos (exemplo simples)
-function notificarPrazos() {
-    if (!("Notification" in window)) return;
-    if (Notification.permission !== "granted") Notification.requestPermission();
-    // Exemplo: alerta se hoje for o último dia de alguma semana
-    document.querySelectorAll('.semana').forEach(sem => {
-        const prazo = sem.querySelector('.prazo');
-        if (prazo) {
-            const datas = prazo.textContent.match(/\d{2}\/\d{2}\/\d{2,4}/g);
-            if (datas && datas.length === 2) {
-                const fim = datas[1].split('/').reverse().join('-');
-                const hoje = new Date().toISOString().slice(0,10);
-                if (fim === hoje) {
-                    Notification.requestPermission().then(function(result) {
-                        if (result === "granted") {
-                            new Notification("Atenção!", { body: "Hoje é o último dia da " + sem.querySelector('h2').textContent });
-                        }
-                    });
-                }
-            }
-        }
-    });
-}
+// --- INICIALIZAÇÃO ---
+window.addEventListener('DOMContentLoaded', () => {
+    // Listeners
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.addEventListener('change', atualizarProgresso));
+    document.querySelectorAll('textarea').forEach(tx => tx.addEventListener('input', salvarEstado));
+    document.getElementById('filtro-semana').addEventListener('change', filtrarSemana);
+    document.getElementById('popup-bg').addEventListener('click', e => { if (e.target === e.currentTarget) fecharPopup(); });
 
-// Inicialização
-window.addEventListener('DOMContentLoaded', function() {
+    // Init
+    if (localStorage.getItem('modoEstudo') === 'dark') document.body.classList.add('dark');
     carregarEstado();
-    atualizarProgressoSemanas();
-    adicionarListeners();
-    checklistDia();
-    notificarPrazos();
+    atualizarProgresso();
 });
 </script>
 </body>

@@ -177,28 +177,121 @@
         // Dados do cronograma (exemplo com 2 semanas, adicione mais conforme necessário)
         const cronograma = [
             {
-                semana: "Semana 1 (17/06 a 23/06)",
+                semana: "Semana 1/10: Reconhecimento e Montagem da Base (17/06 a 23/06)",
                 dias: [
-                    { dia: "Terça (17/06)", meta: "Leitura do PE de SIG e SSI", disciplinas: ["SIG", "SSI"] },
-                    { dia: "Quarta (18/06)", meta: "Leitura do PE de QS e DC", disciplinas: ["QS", "DC"] },
-                    { dia: "Quinta (19/06)", meta: "Leitura e imersão no PE e Aulas (1 a 7) de AE I. Definição do tema para AE I.", disciplinas: ["AE I"] },
-                    { dia: "Sexta (20/06)", meta: "Definição dos temas preliminares para as 3 APs (SSI, QS, DC). Revisão geral dos requisitos de todos os 5 PEs.", disciplinas: ["SSI", "QS", "DC", "SIG", "AE I"] },
-                    { dia: "Sábado (21/06)", meta: "Montagem da base digital (Pastas para cada disciplina, subpastas para aulas/trabalhos).", disciplinas: ["SIG", "SSI", "QS", "DC", "AE I"] },
-                    { dia: "Domingo (22/06)", meta: "Descanso.", disciplinas: [] }
+                    { dia: "Terça (17/06)", meta: "Ler PE de SIG e SSI", disciplinas: ["SIG", "SSI"] },
+                    { dia: "Quarta (18/06)", meta: "Ler PE de QS e DC", disciplinas: ["QS", "DC"] },
+                    { dia: "Quinta (19/06)", meta: "Ler PE e Aulas (1 a 7) de AE I", disciplinas: ["AE I"] },
+                    { dia: "Sexta (20/06)", meta: "Definir temas preliminares para APs", disciplinas: ["SSI", "QS", "DC"] },
+                    { dia: "Sábado (21/06)", meta: "Montagem da base digital", disciplinas: [] },
+                    { dia: "Domingo (22/06)", meta: "Descanso", disciplinas: [] }
                 ]
             },
             {
-                semana: "Semana 2 (24/06 a 30/06)",
+                semana: "Semana 2/10: Estruturação dos Projetos (24/06 a 30/06)",
                 dias: [
-                    { dia: "Terça (24/06)", meta: "Criar AE1_RelatorioFinal_SeuNome.docx e preencher com capa, sumário e tema.", disciplinas: ["AE I"] },
-                    { dia: "Quarta (25/06)", meta: "Criar AP_SSI_SeuNome.docx e definir sumário provisório.", disciplinas: ["SSI"] },
-                    { dia: "Quinta (26/06)", meta: "Criar AP_QS_SeuNome.docx e definir sumário provisório.", disciplinas: ["QS"] },
-                    { dia: "Sexta (27/06)", meta: "Criar AP_DC_SeuNome.docx e definir sumário provisório.", disciplinas: ["DC"] },
-                    { dia: "Sábado (28/06)", meta: "Explorar a Biblioteca Virtual e criar um template padrão para resumos de aulas.", disciplinas: ["SIG", "SSI", "QS", "DC", "AE I"] },
-                    { dia: "Domingo (29/06)", meta: "Descanso/Folga.", disciplinas: [] }
+                    { dia: "Terça (24/06)", meta: "Criar AE1_RelatorioFinal_SeuNome.docx", disciplinas: ["AE I"] },
+                    { dia: "Quarta (25/06)", meta: "Criar AP_SSI_SeuNome.docx", disciplinas: ["SSI"] },
+                    { dia: "Quinta (26/06)", meta: "Criar AP_QS_SeuNome.docx", disciplinas: ["QS"] },
+                    { dia: "Sexta (27/06)", meta: "Criar AP_DC_SeuNome.docx", disciplinas: ["DC"] },
+                    { dia: "Sábado (28/06)", meta: "Explorar Biblioteca Virtual", disciplinas: [] },
+                    { dia: "Domingo (29/06)", meta: "Descanso/Folga", disciplinas: [] }
+                ]
+            },
+            {
+                semana: "Semana 3/10: Produção Preliminar (01/07 a 07/07)",
+                dias: [
+                    { dia: "Terça (01/07)", meta: "Escrever introdução e iniciar Justificativa/Objetivos da AE I", disciplinas: ["AE I"] },
+                    { dia: "Quarta (02/07)", meta: "Escrever introdução e iniciar Fundamentação Teórica da AP de SSI", disciplinas: ["SSI"] },
+                    { dia: "Quinta (03/07)", meta: "Escrever introdução e iniciar Conceitos de Qualidade da AP de QS", disciplinas: ["QS"] },
+                    { dia: "Sexta (04/07)", meta: "Escrever introdução e iniciar Conceitos Jurídicos Relevantes da AP de DC", disciplinas: ["DC"] },
+                    { dia: "Sábado (05/07)", meta: "Aprofundar pesquisa bibliográfica", disciplinas: [] },
+                    { dia: "Domingo (06/07)", meta: "Descanso Ativo / Reunião para validar ideias", disciplinas: [] }
+                ]
+            },
+            {
+                semana: "Semana 4/10: Organização Final e Refinamento (08/07 a 14/07)",
+                dias: [
+                    { dia: "Terça (08/07)", meta: "Revisar e refinar Introduções e Fundamentações", disciplinas: ["AE I", "SSI", "QS", "DC"] },
+                    { dia: "Quarta (09/07)", meta: "Criar estrutura de pastas por aula", disciplinas: [] },
+                    { dia: "Quinta (10/07)", meta: "Leitura Inicial (Aula 1) de SIG", disciplinas: ["SIG"] },
+                    { dia: "Sexta (11/07)", meta: "Leitura Inicial (Aula 1) de SSI", disciplinas: ["SSI"] },
+                    { dia: "Sábado (12/07)", meta: "Leitura Inicial (Aula 1) de QS e DC", disciplinas: ["QS", "DC"] },
+                    { dia: "Domingo (13/07)", meta: "Descanso Total e Alinhamento Final", disciplinas: [] }
+                ]
+            },
+            {
+                semana: "Semana 5/10: Refinamento dos Trabalhos (15/07 a 21/07)",
+                dias: [
+                    { dia: "Segunda (15/07)", meta: "Avançar nos trabalhos AE I e AP de SSI", disciplinas: ["AE I", "SSI"] },
+                    { dia: "Terça (16/07)", meta: "Avançar nos trabalhos AP de QS e AP de DC", disciplinas: ["QS", "DC"] },
+                    { dia: "Quarta (17/07)", meta: "Exploração avançada do AVA", disciplinas: [] },
+                    { dia: "Quinta (18/07)", meta: "Revisão geral do Plano de Estudos", disciplinas: [] },
+                    { dia: "Sexta (19/07)", meta: "Mini-Teste Rápido e rascunho de dúvidas", disciplinas: [] },
+                    { dia: "Sábado (20/07)", meta: "Último check-list pré-batalha", disciplinas: [] },
+                    { dia: "Domingo (21/07)", meta: "🎉 INÍCIO OFICIAL DAS AULAS! 🎉", disciplinas: [] }
+                ]
+            },
+            {
+                semana: "Semana 6/10: Conectando Teoria e Prática (21/07 a 27/07)",
+                dias: [
+                    { dia: "Segunda (21/07)", meta: "Estudar Aula 1 de SSI e QS", disciplinas: ["SSI", "QS"] },
+                    { dia: "Terça (22/07)", meta: "Estudar Aula 1 de SIG e DC", disciplinas: ["SIG", "DC"] },
+                    { dia: "Quarta (23/07)", meta: "Reescrever/melhorar introduções e esqueletos", disciplinas: ["AE I", "SSI", "QS", "DC"] },
+                    { dia: "Quinta (24/07)", meta: "Fazer resumo conectando os temas das 4 aulas", disciplinas: ["SIG", "SSI", "QS", "DC"] },
+                    { dia: "Sexta (25/07)", meta: "Realizar as APOLs da Aula 1", disciplinas: ["SIG", "SSI", "QS", "DC"] },
+                    { dia: "Sábado (26/07)", meta: "Colocar em dia qualquer pendência", disciplinas: [] },
+                    { dia: "Domingo (27/07)", meta: "Descansar", disciplinas: [] }
+                ]
+            },
+            {
+                semana: "Semana 7/10: Ritmo da Maratona e Desenvolvimento Profundo (28/07 a 03/08)",
+                dias: [
+                    { dia: "Segunda (28/07)", meta: "Estudar Aula 2 de SSI e QS", disciplinas: ["SSI", "QS"] },
+                    { dia: "Terça (29/07)", meta: "Estudar Aula 2 de SIG e DC", disciplinas: ["SIG", "DC"] },
+                    { dia: "Quarta (30/07)", meta: "Avançar nos 4 trabalhos, adicionando conteúdo", disciplinas: ["AE I", "SSI", "QS", "DC"] },
+                    { dia: "Quinta (31/07)", meta: "Releia resumos da Aula 1 e 2, conecte conceitos", disciplinas: ["SIG", "SSI", "QS", "DC"] },
+                    { dia: "Sexta (01/08)", meta: "APOLs (Aulas 1 e 2) e Treino de Prova Discursiva", disciplinas: ["SIG", "SSI", "QS", "DC"] },
+                    { dia: "Sábado (02/08)", meta: "Resgate e FOCO ADICIONAL na produção dos 4 trabalhos", disciplinas: ["AE I", "SSI", "QS", "DC"] },
+                    { dia: "Domingo (03/08)", meta: "Descanso", disciplinas: [] }
+                ]
+            },
+            {
+                semana: "Semana 8/10: Reforço dos Fundamentos (04/08 a 10/08)",
+                dias: [
+                    { dia: "Segunda (04/08)", meta: "Estudar Aula 3 de SSI e QS", disciplinas: ["SSI", "QS"] },
+                    { dia: "Terça (05/08)", meta: "Estudar Aula 3 de SIG e DC", disciplinas: ["SIG", "DC"] },
+                    { dia: "Quarta (06/08)", meta: "ATINGIR 50% DO CORPO DOS 4 TRABALHOS ESCRITOS", disciplinas: ["AE I", "SSI", "QS", "DC"] },
+                    { dia: "Quinta (07/08)", meta: "Revisão Profunda e Interconexão das Aulas 1-3", disciplinas: ["SIG", "SSI", "QS", "DC"] },
+                    { dia: "Sexta (08/08)", meta: "APOLs (Aula 3) e Treino de Prova Discursiva", disciplinas: ["SIG", "SSI", "QS", "DC"] },
+                    { dia: "Sábado (09/08)", meta: "Resgate e FOCO CRÍTICO para atingir os 50% dos trabalhos", disciplinas: ["AE I", "SSI", "QS", "DC"] },
+                    { dia: "Domingo (10/08)", meta: "Descanso profundo", disciplinas: [] }
+                ]
+            },
+            {
+                semana: "Semana 9/10: Mergulho Final no Conteúdo (11/08 a 17/08)",
+                dias: [
+                    { dia: "Segunda (11/08)", meta: "Estudar Aulas 4 e 5 de SSI e QS", disciplinas: ["SSI", "QS"] },
+                    { dia: "Terça (12/08)", meta: "Estudar Aulas 4 e 5 de SIG e DC", disciplinas: ["SIG", "DC"] },
+                    { dia: "Quarta (13/08)", meta: "FINALIZAR 95% DO CONTEÚDO BRUTO DOS 4 TRABALHOS", disciplinas: ["AE I", "SSI", "QS", "DC"] },
+                    { dia: "Quinta (14/08)", meta: "Revisão Geral e Preparo Intensivo para Prova", disciplinas: ["SIG", "SSI", "QS", "DC"] },
+                    { dia: "Sexta (15/08)", meta: "APOLs (Aulas 4 e 5) e Simulado de Prova Discursiva", disciplinas: ["SIG", "SSI", "QS", "DC"] },
+                    { dia: "Sábado (16/08)", meta: "Revisão FINAL de CONTEÚDO e PRIMEIROS AJUSTES DE FORMATAÇÃO", disciplinas: ["AE I", "SSI", "QS", "DC"] },
+                    { dia: "Domingo (17/08)", meta: "Descanso e preparo mental para a última semana", disciplinas: [] }
+                ]
+            },
+            {
+                semana: "Semana 10/10: Fechamento Total e Entrega Antecipada (18/08 a 24/08)",
+                dias: [
+                    { dia: "Segunda (18/08)", meta: "Estudar Aula 6 de SSI e QS", disciplinas: ["SSI", "QS"] },
+                    { dia: "Terça (19/08)", meta: "Estudar Aula 6 de SIG e DC", disciplinas: ["SIG", "DC"] },
+                    { dia: "Quarta (20/08)", meta: "Revisão Concentrada para Prova", disciplinas: ["SIG", "SSI", "QS", "DC"] },
+                    { dia: "Quinta (21/08)", meta: "ÚLTIMA REVISÃO DE FORMATO e SUBMISSÃO dos 4 trabalhos", disciplinas: ["AE I", "SSI", "QS", "DC"] },
+                    { dia: "Sexta (22/08)", meta: "Garantia APOLs e Prática final de Prova Discursiva", disciplinas: ["SIG", "SSI", "QS", "DC"] },
+                    { dia: "Sábado (23/08)", meta: "Revisão completa dos resumos pessoais e das suas próprias APs", disciplinas: ["SIG", "SSI", "QS", "DC"] },
+                    { dia: "Domingo (24/08)", meta: "Descanso e preparo mental final para as provas", disciplinas: [] }
                 ]
             }
-            // Adicione as demais semanas seguindo o mesmo padrão
         ];
 
         const disciplinas = ["SIG", "SSI", "QS", "DC", "AE I"];
